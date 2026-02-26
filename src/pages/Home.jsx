@@ -7,13 +7,9 @@ export default function Home() {
 
   const [books, setBooks] = useState([]);
 
-  // ambil data dari backend
   useEffect(() => {
-    axios
-      .get(`${API_URL}/api/books`)
-      .then(res => {
-        setBooks(res.data);
-      })
+    axios.get(`${API_URL}/api/books`)
+      .then(res => setBooks(res.data))
       .catch(err => console.log(err));
   }, []);
 
@@ -23,7 +19,7 @@ export default function Home() {
 
       <div className="grid">
         {books.map(book => (
-          <BookCard key={book.id} book={book} />
+          <BookCard key={book._id} book={book} />
         ))}
       </div>
     </div>
