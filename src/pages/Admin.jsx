@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../config";
 
 export default function Admin() {
 
@@ -15,7 +16,7 @@ export default function Admin() {
   // FETCH BOOKS
   // ====================
   const fetchBooks = async () => {
-    const res = await axios.get("http://localhost:5000/books");
+    const res = await axios.get(`${API_URL}/api/books`);
     setBooks(res.data);
   };
 
@@ -42,13 +43,13 @@ export default function Admin() {
 
       if (editId) {
         await axios.put(
-          `http://localhost:5000/books/${editId}`,
+          `${API_URL}/api/books${editId}`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
       } else {
         await axios.post(
-          "http://localhost:5000/books",
+          `${API_URL}/api/books`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -75,7 +76,7 @@ export default function Admin() {
   // DELETE
   // ====================
   const deleteBook = async (id) => {
-    await axios.delete(`http://localhost:5000/books/${id}`);
+    await axios.delete(`${API_URL}/api/books${id}`);
     fetchBooks();
   };
 

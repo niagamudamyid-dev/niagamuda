@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import BookCard from "../components/BookCard";
+import { API_URL } from "../config";
 
 export default function Home() {
 
@@ -9,7 +10,7 @@ export default function Home() {
   // ambil data dari backend
   useEffect(() => {
     axios
-      .get("http://localhost:5000/books")
+      .get(`${API_URL}/api/books`)
       .then(res => {
         setBooks(res.data);
       })
