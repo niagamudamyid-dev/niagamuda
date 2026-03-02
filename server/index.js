@@ -4,39 +4,50 @@ require("./db");
 const express = require("express");
 const cors = require("cors");
 const upload = require("./upload");
-const path = require("path");
 const app = express();
 const Book = require("./models/Book");
-
 const cloudinary = require("./cloudinary");
-// middleware
-app.use(cors());
 
-// IMPORTANT:
-// jangan parsing multipart request
+app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
+// =============================
+// 🔐 SIMPLE ADMIN PROTECTION
+// =============================
+function adminAuth(req, res, next) {
+  const key = req.headers["x-admin-key"];
 
-// DATA SEMENTARA (nanti database)
-let books = [
-  { id: 1, title: "React Modern", price: 59000 },
-  { id: 2, title: "NodeJS Pemula", price: 75000 },
-];
+  if (!key || key !== process.env.ADMIN_KEY) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-// test route
+  next();
+}
+
+// =============================
+// TEST ROUTE
+// =============================
 app.get("/", (req, res) => {
   res.send("API Toko Buku Jalan 🚀");
 });
 
-// GET semua buku
+// =============================
+// GET ALL BOOKS (PUBLIC)
+// =============================
 app.get("/books", async (req, res) => {
-  const books = await Book.find().sort({ createdAt: -1 });
-  res.json(books);
+  try {
+    const books = await Book.find().sort({ createdAt: -1 });
+    res.json(books);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching books" });
+  }
 });
 
-// POST buku
-app.post("/books", upload.single("image"), async (req, res) => {
+// =============================
+// POST BOOK (ADMIN ONLY)
+// =============================
+app.post("/books", adminAuth, upload.single("image"), async (req, res) => {
   try {
 
     const book = new Book({
@@ -52,70 +63,76 @@ app.post("/books", upload.single("image"), async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.status(500).json(err);
+    res.status(500).json({ message: "Failed to create book" });
   }
 });
 
-// DELETE buku
-app.delete("/books/:id", async (req, res) => {
+// =============================
+// DELETE BOOK (ADMIN ONLY)
+// =============================
+app.delete("/books/:id", adminAuth, async (req, res) => {
   try {
 
     const book = await Book.findById(req.params.id);
-
     if (!book) {
       return res.status(404).json({ message: "Book not found" });
     }
 
-    // ⭐ hapus image cloudinary
     if (book.imagePublicId) {
       await cloudinary.uploader.destroy(book.imagePublicId);
     }
 
     await Book.findByIdAndDelete(req.params.id);
 
-    res.json({ message: "Deleted + Image Removed" });
+    res.json({ message: "Deleted successfully" });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json(err);
+    res.status(500).json({ message: "Delete failed" });
   }
 });
 
-// Edit buku
-app.put("/books/:id", upload.single("image"), async (req, res) => {
+// =============================
+// UPDATE BOOK (ADMIN ONLY)
+// =============================
+app.put("/books/:id", adminAuth, upload.single("image"), async (req, res) => {
+  try {
 
-  const book = await Book.findById(req.params.id);
-
-  if (!book) {
-    return res.status(404).json({ message: "Book not found" });
-  }
-
-  const updateData = {
-    title: req.body.title,
-    price: Number(req.body.price),
-  };
-
-  // jika upload gambar baru
-  if (req.file) {
-
-    // ⭐ hapus gambar lama
-    if (book.imagePublicId) {
-      await cloudinary.uploader.destroy(book.imagePublicId);
+    const book = await Book.findById(req.params.id);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
     }
 
-    updateData.image = req.file.path;
-    updateData.imagePublicId = req.file.filename;
+    const updateData = {
+      title: req.body.title,
+      price: Number(req.body.price),
+    };
+
+    if (req.file) {
+
+      if (book.imagePublicId) {
+        await cloudinary.uploader.destroy(book.imagePublicId);
+      }
+
+      updateData.image = req.file.path;
+      updateData.imagePublicId = req.file.filename;
+    }
+
+    const updatedBook = await Book.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    res.json(updatedBook);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Update failed" });
   }
-
-  const updatedBook = await Book.findByIdAndUpdate(
-    req.params.id,
-    updateData,
-    { new: true }
-  );
-
-  res.json(updatedBook);
 });
 
+// =============================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

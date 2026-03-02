@@ -154,3 +154,20 @@ input, textarea{
     left:0;
   }
 }
+
+.toast{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  background:#4f7fe3;
+  color:white;
+  padding:14px 20px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  animation:fadeIn .3s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}

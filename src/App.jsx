@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
+import AdminGuard from "./components/AdminGuard";
 
 export default function App() {
   return (
@@ -13,7 +14,7 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<Admin />} />
+       <Route path="/cms-portal-2026" element={<AdminGuard />} />
       </Routes>
 
     </BrowserRouter>
