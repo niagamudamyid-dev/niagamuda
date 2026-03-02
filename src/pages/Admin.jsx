@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
+import "./admin.css";
 
 export default function Admin() {
 
@@ -8,195 +9,156 @@ export default function Admin() {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState(null);
-  const [editId, setEditId] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [editId, setEditId] = useState(null);
 
-  // ====================
-  // FETCH BOOKS
-  // ====================
-  const fetchBooks = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/books`);
-      setBooks(res.data);
-    } catch (err) {
-      console.log(err);
-    }
+const fetchBooks = async () => {
+  try {
+    const res = await axios.get(`${API_URL}/api/books`);
+    setBooks(res.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+useEffect(() => {
+  const loadData = async () => {
+    await fetchBooks();
   };
 
-  useEffect(() => {
-    fetchBooks();
-  }, []);
-
-  // ====================
-  // ADD / UPDATE BOOK
-  // ====================
+  loadData();
+}, []);
   const submitBook = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("price", price);
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("price", price);
+    if (image) formData.append("image", image);
 
-      if (image) {
-        formData.append("image", image);
-      }
-
-      // ✅ UPDATE
-      if (editId) {
-        await axios.put(
-          `${API_URL}/api/books?id=${editId}`,
-          formData
-        );
-      }
-      // ✅ CREATE
-      else {
-        await axios.post(
-          `${API_URL}/api/books`,
-          formData
-        );
-      }
-
-      // RESET FORM
-      setTitle("");
-      setPrice("");
-      setImage(null);
-      setPreview(null);
-      setEditId(null);
-
-      fetchBooks();
-
-    } catch (err) {
-      console.error(err);
-      alert("Upload gagal");
-    } finally {
-      setLoading(false);
+    if (editId) {
+      await axios.put(`${API_URL}/api/books?id=${editId}`, formData);
+    } else {
+      await axios.post(`${API_URL}/api/books`, formData);
     }
+
+    setTitle("");
+    setPrice("");
+    setImage(null);
+    setPreview(null);
+    setEditId(null);
+    fetchBooks();
   };
 
-  // ====================
-  // DELETE
-  // ====================
-  const deleteBook = async (id) => {
-    if (!confirm("Hapus buku ini?")) return;
-
-    try {
-      await axios.delete(`${API_URL}/api/books?id=${id}`);
-      fetchBooks();
-    } catch (err) {
-      console.log(err);
-      alert("Delete gagal");
-    }
-  };
-
-  // ====================
-  // EDIT MODE
-  // ====================
   const editBook = (book) => {
     setTitle(book.title);
     setPrice(book.price);
-    setEditId(book._id); // ✅ MongoDB pakai _id
+    setEditId(book._id);
     setPreview(book.image);
-    setImage(null);
   };
 
-  // ====================
-  // UI
-  // ====================
+  const deleteBook = async (id) => {
+    await axios.delete(`${API_URL}/api/books?id=${id}`);
+    fetchBooks();
+  };
+
   return (
-    <div className="container">
-      <h1>Admin Buku 📚</h1>
+    <div className="admin-wrapper">
 
-      <form onSubmit={submitBook} className="admin-form">
+      {/* SIDEBAR */}
+      <div className="sidebar">
+        <h2>Niagamuda</h2>
 
-        <input
-          placeholder="Judul Buku"
-          value={title}
-          onChange={(e)=>setTitle(e.target.value)}
-          required
-        />
+        <div className="menu">
+          <button className="active">Tambah Buku</button>
+          <button>Daftar Buku</button>
+        </div>
+      </div>
 
-        <input
-          type="number"
-          placeholder="Harga"
-          value={price}
-          onChange={(e)=>setPrice(e.target.value)}
-          required
-        />
+      {/* MAIN CONTENT */}
+      <div className="admin-content">
 
-        {/* UPLOAD IMAGE */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e)=>{
-            const file = e.target.files[0];
-            setImage(file);
+        <div className="card">
 
-            if (file) {
-              setPreview(URL.createObjectURL(file));
-            }
-          }}
-        />
+          <h2>{editId ? "Update Buku" : "Tambah Buku"}</h2>
 
-        {/* PREVIEW */}
-        {preview && (
-          <div style={{ marginTop: "15px" }}>
-            <p>Preview Cover:</p>
-            <img
-              src={preview}
-              alt="preview"
-              style={{
-                width: "150px",
-                borderRadius: "10px",
-                boxShadow: "0 4px 12px rgba(0,0,0,.1)"
-              }}
-            />
-          </div>
-        )}
+          <form onSubmit={submitBook} className="grid-form">
 
-        {/* BUTTON */}
-        <button type="submit" disabled={loading}>
-          {loading ? (
-            <span className="spinner"></span>
-          ) : (
-            editId ? "Update Buku" : "Tambah Buku"
-          )}
-        </button>
-
-      </form>
-
-      <hr />
-
-      <h2>Daftar Buku</h2>
-
-      {books.map(book => (
-        <div key={book._id} className="admin-item">
-
-          <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
-            <img
-              src={book.image || "https://via.placeholder.com/60"}
-              width="60"
-              style={{borderRadius:"8px"}}
-            />
-
+            {/* LEFT */}
             <div>
-              <b>{book.title}</b>
-              <p>Rp {Number(book.price).toLocaleString()}</p>
-            </div>
-          </div>
+              <label>Judul Buku</label>
+              <input
+                value={title}
+                onChange={(e)=>setTitle(e.target.value)}
+                required
+              />
 
-          <div>
-            <button onClick={()=>editBook(book)}>Edit</button>
-            <button onClick={()=>deleteBook(book._id)}>
-              Delete
+              <label>Harga</label>
+              <input
+                type="number"
+                value={price}
+                onChange={(e)=>setPrice(e.target.value)}
+                required
+              />
+
+              <label>Upload Cover</label>
+              <input
+                type="file"
+                onChange={(e)=>{
+                  const file = e.target.files[0];
+                  setImage(file);
+                  if (file) setPreview(URL.createObjectURL(file));
+                }}
+              />
+
+              {preview && (
+                <div className="preview">
+                  <img src={preview} alt="preview" />
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT */}
+            <div>
+              <label>Sinopsis</label>
+              <textarea rows="8" placeholder="Deskripsi buku..." />
+            </div>
+
+            <button className="submit-btn">
+              {editId ? "Update Buku" : "Tambah Buku"}
             </button>
-          </div>
+
+          </form>
 
         </div>
-      ))}
 
+        {/* LIST */}
+        <div className="card">
+          <h2>Daftar Buku</h2>
+
+          {books.map(book => (
+            <div key={book._id} className="book-item">
+              <div>
+                <img src={book.image} />
+                <div>
+                  <b>{book.title}</b>
+                  <p>Rp {Number(book.price).toLocaleString()}</p>
+                </div>
+              </div>
+
+              <div>
+                <button onClick={()=>editBook(book)}>Edit</button>
+                <button className="danger"
+                        onClick={()=>deleteBook(book._id)}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+
+        </div>
+
+      </div>
     </div>
   );
 }
