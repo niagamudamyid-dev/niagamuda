@@ -6,10 +6,12 @@ export default function App() {
   return (
     <BrowserRouter>
 
-      <nav style={{padding:"20px"}}>
-        <Link to="/">Toko</Link> |{" "}
-        <Link to="/admin">Admin</Link>
-      </nav>
+      <nav className="navbar">
+  <div className="brand">
+    <span className="dot"></span>
+    Niagamuda
+  </div>
+</nav>
 
       <Routes>
         <Route path="/" element={<Home />} />
