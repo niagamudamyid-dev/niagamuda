@@ -8,7 +8,7 @@ import Book from "./models/Book.js";
 
 export const config = {
   api: {
-    bodyParser: false, // WAJIB untuk upload file
+    bodyParser: false,
   },
 };
 
@@ -27,10 +27,22 @@ async function connectDB() {
 }
 
 export default async function handler(req, res) {
+
+  // ✅ HANDLE CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   await connectDB();
 
+  const { id } = req.query;
+
   // =====================
-  // GET BOOKS
+  // GET
   // =====================
   if (req.method === "GET") {
     const books = await Book.find().sort({ createdAt: -1 });
@@ -38,29 +50,87 @@ export default async function handler(req, res) {
   }
 
   // =====================
-  // POST BOOK (UPLOAD)
+  // DELETE
+  // =====================
+  if (req.method === "DELETE") {
+    await Book.findByIdAndDelete(id);
+    return res.status(200).json({ message: "Deleted" });
+  }
+
+  // =====================
+  // UPDATE
+  // =====================
+  if (req.method === "PUT") {
+    const form = new IncomingForm();
+
+    form.parse(req, async (err, fields, files) => {
+      try {
+        const updateData = {
+          title: fields.title[0],
+          price: Number(fields.price[0]),
+        };
+
+        if (files.image) {
+          const file = files.image[0];
+
+          const result = await cloudinary.uploader.upload(
+            file.filepath,
+            { folder: "books" }
+          );
+
+          updateData.image = result.secure_url;
+          updateData.public_id = result.public_id;
+        }
+
+        const updated = await Book.findByIdAndUpdate(
+          id,
+          updateData,
+          { new: true }
+        );
+
+        return res.status(200).json(updated);
+
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Update failed" });
+      }
+    });
+
+    return;
+  }
+
+  // =====================
+  // CREATE (POST)
   // =====================
   if (req.method === "POST") {
     const form = new IncomingForm();
 
     form.parse(req, async (err, fields, files) => {
       try {
-        const file = files.image[0];
+        let imageUrl = null;
+        let publicId = null;
 
-        // upload ke cloudinary
-        const result = await cloudinary.uploader.upload(
-          file.filepath,
-          { folder: "books" }
-        );
+        if (files.image) {
+          const file = files.image[0];
+
+          const result = await cloudinary.uploader.upload(
+            file.filepath,
+            { folder: "books" }
+          );
+
+          imageUrl = result.secure_url;
+          publicId = result.public_id;
+        }
 
         const book = await Book.create({
           title: fields.title[0],
-          price: fields.price[0],
-          image: result.secure_url,
-          public_id: result.public_id,
+          price: Number(fields.price[0]),
+          image: imageUrl,
+          public_id: publicId,
         });
 
         return res.status(200).json(book);
+
       } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Upload failed" });
