@@ -11,20 +11,19 @@ body {
   margin: auto;
 }
 
-.brand {
-  font-weight: 700;
-  font-size: 18px;
+.navbar {
+  padding: 20px 40px;
+  background: white;
+  box-shadow: 0 5px 20px rgba(0,0,0,.05);
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #1e293b;
 }
 
-.dot {
-  width: 10px;
-  height: 10px;
-  background: #4F8EF7;
-  border-radius: 50%;
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #4F8EF7;
 }
 
 /* GRID BUKU */

@@ -7,11 +7,9 @@ export default function App() {
     <BrowserRouter>
 
       <nav className="navbar">
-  <div className="brand">
-    <span className="dot"></span>
-    Niagamuda
-  </div>
+  <a href="/" className="logo">Niagamuda</a>
 </nav>
+
 
       <Routes>
         <Route path="/" element={<Home />} />
