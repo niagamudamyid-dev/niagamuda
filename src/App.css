@@ -40,18 +40,3 @@
 .read-the-docs {
   color: #888;
 }
-.brand {
-  font-weight: 700;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #1e293b;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  background: #4F8EF7;
-  border-radius: 50%;
-}
