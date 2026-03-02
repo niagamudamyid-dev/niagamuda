@@ -3,9 +3,9 @@
 
 import mongoose from "mongoose";
 import { IncomingForm } from "formidable";
+import jwt from "jsonwebtoken";
 import cloudinary from "./cloudinary.js";
 import Book from "./models/Book.js";
-import "./db.js";
 
 export const config = {
   api: {
@@ -13,26 +13,54 @@ export const config = {
   },
 };
 
+// ========================
+// MONGODB CONNECTION CACHE
+// ========================
+
 const MONGO_URI = process.env.MONGO_URI;
 
-let cached = globalThis.mongoose;
-
-if (!cached) {
-  cached = globalThis.mongoose = { conn: null };
+if (!globalThis.mongoose) {
+  globalThis.mongoose = { conn: null };
 }
 
 async function connectDB() {
-  if (cached.conn) return cached.conn;
-  cached.conn = await mongoose.connect(MONGO_URI);
-  return cached.conn;
+  if (globalThis.mongoose.conn) {
+    return globalThis.mongoose.conn;
+  }
+
+  globalThis.mongoose.conn = await mongoose.connect(MONGO_URI);
+  return globalThis.mongoose.conn;
 }
+
+// ========================
+// JWT VERIFY
+// ========================
+
+function verifyAdmin(req) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    throw new Error("No token provided");
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.JWT_SECRET);
+}
+
+// ========================
+// HANDLER
+// ========================
 
 export default async function handler(req, res) {
 
-  // ✅ HANDLE CORS
+  // ===== CORS FIX =====
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -42,36 +70,79 @@ export default async function handler(req, res) {
 
   const { id } = req.query;
 
-  // =====================
-  // GET
-  // =====================
+  // ========================
+  // GET BOOKS (PUBLIC)
+  // ========================
+
   if (req.method === "GET") {
     const books = await Book.find().sort({ createdAt: -1 });
     return res.status(200).json(books);
   }
 
-  // =====================
-  // DELETE
-  // =====================
+  // ========================
+  // DELETE BOOK (PROTECTED)
+  // ========================
+
   if (req.method === "DELETE") {
-    await Book.findByIdAndDelete(id);
-    return res.status(200).json({ message: "Deleted" });
+    try {
+      verifyAdmin(req);
+
+      const book = await Book.findById(id);
+
+      if (!book) {
+        return res.status(404).json({ message: "Book not found" });
+      }
+
+      // Delete image from Cloudinary
+      if (book.public_id) {
+        await cloudinary.uploader.destroy(book.public_id);
+      }
+
+      await Book.findByIdAndDelete(id);
+
+      return res.status(200).json({ message: "Deleted successfully" });
+
+    // eslint-disable-next-line no-unused-vars
+    } catch (err) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
   }
 
-  // =====================
-  // UPDATE
-  // =====================
+  // ========================
+  // UPDATE BOOK (PROTECTED)
+  // ========================
+
   if (req.method === "PUT") {
+    try {
+      verifyAdmin(req);
+    } catch {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const form = new IncomingForm();
 
     form.parse(req, async (err, fields, files) => {
       try {
+
+        const book = await Book.findById(id);
+
+        if (!book) {
+          return res.status(404).json({ message: "Book not found" });
+        }
+
         const updateData = {
           title: fields.title[0],
           price: Number(fields.price[0]),
         };
 
+        // If new image uploaded
         if (files.image) {
+
+          // Delete old image
+          if (book.public_id) {
+            await cloudinary.uploader.destroy(book.public_id);
+          }
+
           const file = files.image[0];
 
           const result = await cloudinary.uploader.upload(
@@ -100,14 +171,22 @@ export default async function handler(req, res) {
     return;
   }
 
-  // =====================
-  // CREATE (POST)
-  // =====================
+  // ========================
+  // CREATE BOOK (PROTECTED)
+  // ========================
+
   if (req.method === "POST") {
+    try {
+      verifyAdmin(req);
+    } catch {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const form = new IncomingForm();
 
     form.parse(req, async (err, fields, files) => {
       try {
+
         let imageUrl = null;
         let publicId = null;
 
