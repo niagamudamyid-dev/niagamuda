@@ -41,7 +41,7 @@ app.post("/books", upload.single("image"), async (req, res) => {
 
     const book = new Book({
       title: req.body.title,
-      price: req.body.price,
+      price: Number(req.body.price),
       image: req.file?.path || null,
       imagePublicId: req.file?.filename || null,
     });
@@ -92,7 +92,7 @@ app.put("/books/:id", upload.single("image"), async (req, res) => {
 
   const updateData = {
     title: req.body.title,
-    price: req.body.price,
+    price: Number(req.body.price),
   };
 
   // jika upload gambar baru
