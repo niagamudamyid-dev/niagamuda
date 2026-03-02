@@ -1,12 +1,12 @@
 require("dotenv").config();
-require("./db");
+require("../api/db");
 
 const express = require("express");
 const cors = require("cors");
-const upload = require("./upload");
+const upload = require("../api/upload");
 const app = express();
 const Book = require("./models/Book");
-const cloudinary = require("./cloudinary");
+const cloudinary = require("../api/cloudinary");
 const jwt = require("jsonwebtoken");
 
 app.use(cors());

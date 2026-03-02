@@ -3,8 +3,9 @@
 
 import mongoose from "mongoose";
 import { IncomingForm } from "formidable";
-import cloudinary from "../server/cloudinary.js";
+import cloudinary from "./cloudinary.js";
 import Book from "./models/Book.js";
+import "./db.js";
 
 export const config = {
   api: {
