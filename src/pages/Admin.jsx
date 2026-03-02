@@ -11,42 +11,69 @@ export default function Admin() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [editId, setEditId] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const fetchBooks = async () => {
-  try {
-    const res = await axios.get(`${API_URL}/api/books`);
-    setBooks(res.data);
-  } catch (err) {
-    console.error(err);
-  }
-};
+  // =====================
+  // FETCH BOOKS
+  // =====================
+  const fetchBooks = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/books`);
+      setBooks(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-useEffect(() => {
+ useEffect(() => {
   const loadData = async () => {
     await fetchBooks();
   };
 
   loadData();
 }, []);
+
+  // =====================
+  // SUBMIT
+  // =====================
   const submitBook = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const formData = new FormData();
     formData.append("title", title);
     formData.append("price", price);
     if (image) formData.append("image", image);
 
-    if (editId) {
-      await axios.put(`${API_URL}/api/books?id=${editId}`, formData);
-    } else {
-      await axios.post(`${API_URL}/api/books`, formData);
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/api/books?id=${editId}`, formData);
+      } else {
+        await axios.post(`${API_URL}/api/books`, formData);
+      }
+
+      setTitle("");
+      setPrice("");
+      setImage(null);
+      setPreview(null);
+      setEditId(null);
+
+      fetchBooks();
+    // eslint-disable-next-line no-unused-vars
+    } catch (err) {
+      alert("Terjadi kesalahan");
     }
 
-    setTitle("");
-    setPrice("");
-    setImage(null);
-    setPreview(null);
-    setEditId(null);
+    setLoading(false);
+  };
+
+  // =====================
+  // DELETE
+  // =====================
+  const deleteBook = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus buku ini?")) return;
+    await axios.delete(`${API_URL}/api/books?id=${id}`);
     fetchBooks();
   };
 
@@ -55,36 +82,39 @@ useEffect(() => {
     setPrice(book.price);
     setEditId(book._id);
     setPreview(book.image);
-  };
-
-  const deleteBook = async (id) => {
-    await axios.delete(`${API_URL}/api/books?id=${id}`);
-    fetchBooks();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <div className="admin-wrapper">
+    <div className="admin-layout">
 
       {/* SIDEBAR */}
-      <div className="sidebar">
+      <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <h2>Niagamuda</h2>
-
-        <div className="menu">
-          <button className="active">Tambah Buku</button>
-          <button>Daftar Buku</button>
-        </div>
+        <button className="menu-btn">Dashboard</button>
+        <button className="menu-btn active">Kelola Buku</button>
       </div>
 
-      {/* MAIN CONTENT */}
-      <div className="admin-content">
+      {/* MAIN */}
+      <div className="main">
 
+        {/* TOPBAR */}
+        <div className="topbar">
+          <button
+            className="hamburger"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            ☰
+          </button>
+          <h3>Admin Dashboard</h3>
+        </div>
+
+        {/* FORM CARD */}
         <div className="card">
-
           <h2>{editId ? "Update Buku" : "Tambah Buku"}</h2>
 
-          <form onSubmit={submitBook} className="grid-form">
+          <form onSubmit={submitBook} className="form-grid">
 
-            {/* LEFT */}
             <div>
               <label>Judul Buku</label>
               <input
@@ -112,33 +142,29 @@ useEffect(() => {
               />
 
               {preview && (
-                <div className="preview">
-                  <img src={preview} alt="preview" />
-                </div>
+                <img className="preview-img" src={preview} />
               )}
             </div>
 
-            {/* RIGHT */}
             <div>
               <label>Sinopsis</label>
               <textarea rows="8" placeholder="Deskripsi buku..." />
             </div>
 
-            <button className="submit-btn">
-              {editId ? "Update Buku" : "Tambah Buku"}
+            <button className="primary-btn" disabled={loading}>
+              {loading ? "Memproses..." : editId ? "Update Buku" : "Tambah Buku"}
             </button>
 
           </form>
-
         </div>
 
-        {/* LIST */}
+        {/* LIST CARD */}
         <div className="card">
           <h2>Daftar Buku</h2>
 
           {books.map(book => (
-            <div key={book._id} className="book-item">
-              <div>
+            <div key={book._id} className="book-row">
+              <div className="book-info">
                 <img src={book.image} />
                 <div>
                   <b>{book.title}</b>
@@ -146,16 +172,17 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div>
+              <div className="book-actions">
                 <button onClick={()=>editBook(book)}>Edit</button>
-                <button className="danger"
-                        onClick={()=>deleteBook(book._id)}>
+                <button
+                  className="danger"
+                  onClick={()=>deleteBook(book._id)}
+                >
                   Delete
                 </button>
               </div>
             </div>
           ))}
-
         </div>
 
       </div>
