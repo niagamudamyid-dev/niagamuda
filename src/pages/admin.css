@@ -1,230 +1,156 @@
-/* ===============================
-   GLOBAL
-================================ */
-body {
-  margin: 0;
-  font-family: "Inter", sans-serif;
-  background: #f4f8ff;
-  color: #1e293b;
+/* ===== LAYOUT ===== */
+.admin{
+  display:flex;
+  min-height:100vh;
+  background:#f4f7fb;
+  font-family:system-ui;
 }
 
-/* ===============================
-   LAYOUT
-================================ */
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
+/* SIDEBAR */
+.sidebar{
+  width:240px;
+  background:linear-gradient(180deg,#6fa8ff,#4f7fe3);
+  color:white;
+  padding:25px;
 }
 
-/* ===============================
-   SIDEBAR
-================================ */
-.sidebar {
-  width: 240px;
-  background: linear-gradient(180deg,#6ea8ff,#4f8ef7);
-  color: white;
-  padding: 30px 20px;
-  transition: 0.3s;
+.sidebar h2{
+  margin-bottom:30px;
 }
 
-.sidebar h2 {
-  margin-bottom: 40px;
-  font-weight: 700;
+.sidebar button{
+  width:100%;
+  padding:12px;
+  border:none;
+  margin-bottom:10px;
+  border-radius:10px;
+  background:rgba(255,255,255,.15);
+  color:white;
+  cursor:pointer;
 }
 
-.menu-btn {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255,255,255,.15);
-  color: white;
-  cursor: pointer;
-  font-size: 15px;
+.sidebar .active{
+  background:white;
+  color:#4f7fe3;
 }
 
-.menu-btn.active,
-.menu-btn:hover {
-  background: rgba(255,255,255,.3);
+/* MAIN */
+.main{
+  flex:1;
+  padding:25px;
 }
 
-/* ===============================
-   MAIN AREA
-================================ */
-.main {
-  flex: 1;
-  padding: 40px;
+/* TOPBAR */
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:25px;
 }
 
-/* ===============================
-   TOPBAR
-================================ */
-.topbar {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
+/* STATS */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+  margin-bottom:25px;
 }
 
-.hamburger {
-  display: none;
-  font-size: 22px;
-  border: none;
-  background: #4f8ef7;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 15px;
-  cursor: pointer;
+.stat-card{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.05);
 }
 
-/* ===============================
-   CARD
-================================ */
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 30px;
-  margin-bottom: 30px;
-  box-shadow: 0 10px 35px rgba(79,142,247,.12);
+/* CARD */
+.card{
+  background:white;
+  padding:25px;
+  border-radius:16px;
+  margin-bottom:25px;
+  box-shadow:0 6px 20px rgba(0,0,0,.05);
 }
 
-.card h2 {
-  margin-bottom: 25px;
+/* FORM */
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
 }
 
-/* ===============================
-   FORM GRID
-================================ */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+input, textarea{
+  width:100%;
+  padding:12px;
+  margin-top:5px;
+  margin-bottom:15px;
+  border-radius:10px;
+  border:1px solid #dfe6f3;
 }
 
-.form-grid label {
-  font-weight: 600;
-  margin-top: 10px;
-  display: block;
+.preview{
+  width:150px;
+  border-radius:10px;
+  margin-top:10px;
 }
 
-.form-grid input,
-.form-grid textarea {
-  width: 100%;
-  padding: 12px;
-  margin-top: 6px;
-  border-radius: 10px;
-  border: 1px solid #dbeafe;
-  background: #f8fbff;
-  font-size: 14px;
+.primary{
+  grid-column:span 2;
+  background:#5b8cff;
+  color:white;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
 }
 
-.form-grid textarea {
-  resize: none;
+/* TABLE */
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 0;
+  border-bottom:1px solid #eee;
 }
 
-/* ===============================
-   PREVIEW IMAGE
-================================ */
-.preview-img {
-  width: 160px;
-  margin-top: 15px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.1);
+.info{
+  display:flex;
+  gap:15px;
+  align-items:center;
 }
 
-/* ===============================
-   BUTTON
-================================ */
-.primary-btn {
-  grid-column: span 2;
-  margin-top: 20px;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background: #4f8ef7;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: .2s;
+.info img{
+  width:55px;
+  border-radius:8px;
 }
 
-.primary-btn:hover {
-  background: #3a74d9;
+.actions button{
+  margin-left:10px;
+  padding:8px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
 }
 
-/* ===============================
-   BOOK LIST
-================================ */
-.book-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
-  border-bottom: 1px solid #eef4ff;
+.danger{
+  background:#ff5c5c;
+  color:white;
 }
 
-.book-info {
-  display: flex;
-  align-items: center;
-}
-
-.book-info img {
-  width: 65px;
-  height: 65px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-right: 15px;
-}
-
-.book-actions button {
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
-  background: #4f8ef7;
-  color: white;
-  cursor: pointer;
-  margin-left: 10px;
-}
-
-.book-actions .danger {
-  background: #ff6b6b;
-}
-
-/* ===============================
-   RESPONSIVE
-================================ */
-@media (max-width: 900px) {
-
-  .form-grid {
-    grid-template-columns: 1fr;
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .form-grid{
+    grid-template-columns:1fr;
   }
 
-  .primary-btn {
-    grid-column: span 1;
-  }
-}
-
-@media (max-width: 768px) {
-
-  .sidebar {
-    position: fixed;
-    left: -240px;
-    top: 0;
-    height: 100%;
-    z-index: 999;
+  .sidebar{
+    position:fixed;
+    left:-240px;
+    height:100%;
+    transition:.3s;
   }
 
-  .sidebar.open {
-    left: 0;
-  }
-
-  .hamburger {
-    display: block;
-  }
-
-  .main {
-    padding: 20px;
+  .sidebar.open{
+    left:0;
   }
 }
