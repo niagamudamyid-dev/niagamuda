@@ -16,8 +16,12 @@ export default function Admin() {
   // FETCH BOOKS
   // ====================
   const fetchBooks = async () => {
-    const res = await axios.get(`${API_URL}/api/books`);
-    setBooks(res.data);
+    try {
+      const res = await axios.get(`${API_URL}/api/books`);
+      setBooks(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -29,8 +33,7 @@ export default function Admin() {
   // ====================
   const submitBook = async (e) => {
     e.preventDefault();
-
-    setLoading(true); // ✅ mulai loading
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -41,21 +44,22 @@ export default function Admin() {
         formData.append("image", image);
       }
 
+      // ✅ UPDATE
       if (editId) {
         await axios.put(
-          `${API_URL}/api/books${editId}`,
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          `${API_URL}/api/books?id=${editId}`,
+          formData
         );
-      } else {
+      }
+      // ✅ CREATE
+      else {
         await axios.post(
           `${API_URL}/api/books`,
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          formData
         );
       }
 
-      // reset form
+      // RESET FORM
       setTitle("");
       setPrice("");
       setImage(null);
@@ -68,7 +72,7 @@ export default function Admin() {
       console.error(err);
       alert("Upload gagal");
     } finally {
-      setLoading(false); // ✅ selesai loading
+      setLoading(false);
     }
   };
 
@@ -76,8 +80,15 @@ export default function Admin() {
   // DELETE
   // ====================
   const deleteBook = async (id) => {
-    await axios.delete(`${API_URL}/api/books${id}`);
-    fetchBooks();
+    if (!confirm("Hapus buku ini?")) return;
+
+    try {
+      await axios.delete(`${API_URL}/api/books?id=${id}`);
+      fetchBooks();
+    } catch (err) {
+      console.log(err);
+      alert("Delete gagal");
+    }
   };
 
   // ====================
@@ -86,10 +97,14 @@ export default function Admin() {
   const editBook = (book) => {
     setTitle(book.title);
     setPrice(book.price);
-    setEditId(book._id);
+    setEditId(book._id); // ✅ MongoDB pakai _id
     setPreview(book.image);
+    setImage(null);
   };
 
+  // ====================
+  // UI
+  // ====================
   return (
     <div className="container">
       <h1>Admin Buku 📚</h1>
@@ -111,7 +126,7 @@ export default function Admin() {
           required
         />
 
-        {/* UPLOAD GAMBAR */}
+        {/* UPLOAD IMAGE */}
         <input
           type="file"
           accept="image/*"
@@ -141,7 +156,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* BUTTON WITH SPINNER */}
+        {/* BUTTON */}
         <button type="submit" disabled={loading}>
           {loading ? (
             <span className="spinner"></span>
@@ -157,19 +172,19 @@ export default function Admin() {
       <h2>Daftar Buku</h2>
 
       {books.map(book => (
-        <div key={book.id} className="admin-item">
+        <div key={book._id} className="admin-item">
 
-          <div>
-            {book.image && (
-              <img
-                src={book.image}
-                width="60"
-                style={{borderRadius:"8px"}}
-              />
-            )}
+          <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
+            <img
+              src={book.image || "https://via.placeholder.com/60"}
+              width="60"
+              style={{borderRadius:"8px"}}
+            />
 
-            <b>{book.title}</b>
-            <p>Rp {book.price}</p>
+            <div>
+              <b>{book.title}</b>
+              <p>Rp {Number(book.price).toLocaleString()}</p>
+            </div>
           </div>
 
           <div>
@@ -181,6 +196,7 @@ export default function Admin() {
 
         </div>
       ))}
+
     </div>
   );
 }
