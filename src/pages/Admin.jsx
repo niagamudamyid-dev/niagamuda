@@ -6,10 +6,10 @@ import "./admin.css";
 export default function Admin() {
 
   const adminConfig = {
-    headers: {
-      "x-admin-key": import.meta.env.VITE_ADMIN_KEY
-    }
-  };
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("adminToken")}`
+  }
+};
 
   const [books, setBooks] = useState([]);
   const [title, setTitle] = useState("");
