@@ -3,13 +3,14 @@ import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import AdminGuard from "./components/AdminGuard";
+import { Link } from "react-router-dom";
 
 export default function App() {
   return (
     <BrowserRouter>
 
       <nav className="navbar">
-        <a href="/" className="logo">Niagamuda</a>
+        <Link to="/" className="logo">Niagamuda</Link>
       </nav>
 
       <Routes>

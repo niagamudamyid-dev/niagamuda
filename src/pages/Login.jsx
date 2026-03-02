@@ -16,7 +16,7 @@ export default function Login() {
       });
 
       localStorage.setItem("adminToken", res.data.token);
-      window.location.href = "/admin";
+      window.location.href = "/cms-portal-2026";
 
     } catch {
       alert("Login gagal");
