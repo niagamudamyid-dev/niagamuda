@@ -7,34 +7,64 @@ const upload = require("./upload");
 const app = express();
 const Book = require("./models/Book");
 const cloudinary = require("./cloudinary");
+const jwt = require("jsonwebtoken");
 
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// =============================
-// 🔐 SIMPLE ADMIN PROTECTION
-// =============================
-function adminAuth(req, res, next) {
-  const key = req.headers["x-admin-key"];
+// =================================
+// 🔐 JWT AUTH MIDDLEWARE
+// =================================
+function jwtAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
 
-  if (!key || key !== process.env.ADMIN_KEY) {
-    return res.status(401).json({ message: "Unauthorized" });
+  if (!authHeader) {
+    return res.status(401).json({ message: "Token tidak ada" });
   }
 
-  next();
+  const token = authHeader.split(" ")[1];
+
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Token tidak valid" });
+  }
 }
 
-// =============================
+// =================================
 // TEST ROUTE
-// =============================
+// =================================
 app.get("/", (req, res) => {
   res.send("API Toko Buku Jalan 🚀");
 });
 
-// =============================
+// =================================
+// 🔐 ADMIN LOGIN (JWT)
+// =================================
+app.post("/admin/login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (
+    username === process.env.ADMIN_USER &&
+    password === process.env.ADMIN_PASS
+  ) {
+    const token = jwt.sign(
+      { role: "admin" },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+
+    return res.json({ token });
+  }
+
+  res.status(401).json({ message: "Login gagal" });
+});
+
+// =================================
 // GET ALL BOOKS (PUBLIC)
-// =============================
+// =================================
 app.get("/books", async (req, res) => {
   try {
     const books = await Book.find().sort({ createdAt: -1 });
@@ -44,12 +74,11 @@ app.get("/books", async (req, res) => {
   }
 });
 
-// =============================
-// POST BOOK (ADMIN ONLY)
-// =============================
-app.post("/books", adminAuth, upload.single("image"), async (req, res) => {
+// =================================
+// POST BOOK (PROTECTED)
+// =================================
+app.post("/books", jwtAuth, upload.single("image"), async (req, res) => {
   try {
-
     const book = new Book({
       title: req.body.title,
       price: Number(req.body.price),
@@ -58,7 +87,6 @@ app.post("/books", adminAuth, upload.single("image"), async (req, res) => {
     });
 
     await book.save();
-
     res.json(book);
 
   } catch (err) {
@@ -67,13 +95,13 @@ app.post("/books", adminAuth, upload.single("image"), async (req, res) => {
   }
 });
 
-// =============================
-// DELETE BOOK (ADMIN ONLY)
-// =============================
-app.delete("/books/:id", adminAuth, async (req, res) => {
+// =================================
+// DELETE BOOK (PROTECTED)
+// =================================
+app.delete("/books/:id", jwtAuth, async (req, res) => {
   try {
-
     const book = await Book.findById(req.params.id);
+
     if (!book) {
       return res.status(404).json({ message: "Book not found" });
     }
@@ -92,13 +120,13 @@ app.delete("/books/:id", adminAuth, async (req, res) => {
   }
 });
 
-// =============================
-// UPDATE BOOK (ADMIN ONLY)
-// =============================
-app.put("/books/:id", adminAuth, upload.single("image"), async (req, res) => {
+// =================================
+// UPDATE BOOK (PROTECTED)
+// =================================
+app.put("/books/:id", jwtAuth, upload.single("image"), async (req, res) => {
   try {
-
     const book = await Book.findById(req.params.id);
+
     if (!book) {
       return res.status(404).json({ message: "Book not found" });
     }
@@ -109,7 +137,6 @@ app.put("/books/:id", adminAuth, upload.single("image"), async (req, res) => {
     };
 
     if (req.file) {
-
       if (book.imagePublicId) {
         await cloudinary.uploader.destroy(book.imagePublicId);
       }
@@ -132,7 +159,7 @@ app.put("/books/:id", adminAuth, upload.single("image"), async (req, res) => {
   }
 });
 
-// =============================
+// =================================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

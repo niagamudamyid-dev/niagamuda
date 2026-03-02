@@ -1,22 +1,12 @@
-import { useState } from "react";
-import Admin from "../pages/Admin";
+import { Navigate } from "react-router-dom";
 
-export default function AdminGuard() {
+export default function AdminGuard({ children }) {
 
-  const [authorized, setAuthorized] = useState(
-    localStorage.getItem("admin-auth") === "true"
-  );
+  const token = localStorage.getItem("adminToken");
 
-  if (!authorized) {
-    const key = prompt("Enter Admin Key:");
-
-    if (key === import.meta.env.VITE_ADMIN_KEY) {
-      localStorage.setItem("admin-auth", "true");
-      setAuthorized(true);
-    } else {
-      return <h2 style={{padding:"50px"}}>Unauthorized</h2>;
-    }
+  if (!token) {
+    return <Navigate to="/login" />;
   }
 
-  return <Admin />;
+  return children;
 }
