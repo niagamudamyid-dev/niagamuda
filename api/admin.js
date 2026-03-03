@@ -25,7 +25,7 @@ export default function handler(req, res) {
     const token = jwt.sign(
       { role: "admin" },
       process.env.JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "10m" }
     );
 
     return res.status(200).json({ token });

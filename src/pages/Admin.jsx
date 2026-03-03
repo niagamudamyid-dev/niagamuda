@@ -2,8 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
 import "./admin.css";
+import useAutoLogout from "../components/useAutoLogout";
 
 export default function Admin() {
+  useAutoLogout(10 * 60 * 1000); // 10 menit
 
   const adminConfig = {
   headers: {
