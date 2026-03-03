@@ -47,7 +47,7 @@ export default function Admin() {
 
       if (editId) {
         await axios.put(
-          `${API_URL}/api/books/${editId}`,
+          `${API_URL}/api/books?id=${editId}`,
           formData,
           adminConfig
         );
@@ -81,7 +81,7 @@ export default function Admin() {
   const deleteBook = async (id) => {
     try {
       await axios.delete(
-        `${API_URL}/api/books/${id}`,
+        `${API_URL}/api/books?id=${id}`,
         adminConfig
       );
 
@@ -134,7 +134,14 @@ export default function Admin() {
             <h2>Online</h2>
           </div>
         </section>
-
+<button
+  onClick={() => {
+    localStorage.removeItem("adminToken");
+    window.location.href = "/login";
+  }}
+>
+  Logout
+</button>
         <section className="card">
           <h2>{editId ? "Update Buku" : "Tambah Buku"}</h2>
 
