@@ -118,7 +118,7 @@ export default function Admin() {
       </aside>
 
       <main className="main">
-
+{sidebarOpen && <div className="overlay" onClick={()=>setSidebarOpen(false)}></div>}
         <header className="topbar">
           <button onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
