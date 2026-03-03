@@ -41,11 +41,39 @@
 }
 
 /* TOPBAR */
-.topbar{
-  display:flex;
-  align-items:center;
-  gap:15px;
-  margin-bottom:25px;
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255,0,0,0.3);
+}
+
+.menu-btn {
+  background: #f1f3f6;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 /* STATS */

@@ -124,6 +124,15 @@ export default function Admin() {
             ☰
           </button>
           <h3>Admin Dashboard</h3>
+
+          <button
+  onClick={() => {
+    localStorage.removeItem("adminToken");
+    window.location.href = "/login";
+  }}
+>
+  Logout
+</button>
         </header>
 
         <section className="stats">
@@ -136,14 +145,7 @@ export default function Admin() {
             <h2>Online</h2>
           </div>
         </section>
-<button
-  onClick={() => {
-    localStorage.removeItem("adminToken");
-    window.location.href = "/login";
-  }}
->
-  Logout
-</button>
+
         <section className="card">
           <h2>{editId ? "Update Buku" : "Tambah Buku"}</h2>
 
