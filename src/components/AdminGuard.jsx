@@ -4,15 +4,15 @@ import axios from "axios";
 import { API_URL } from "../config";
 
 export default function AdminGuard({ children }) {
-
   const [loading, setLoading] = useState(true);
-  const [isValid, setIsValid] = useState(false);
+  const [valid, setValid] = useState(false);
 
   useEffect(() => {
-    const verifyToken = async () => {
+    const verify = async () => {
       const token = localStorage.getItem("adminToken");
 
       if (!token) {
+        setValid(false);
         setLoading(false);
         return;
       }
@@ -24,23 +24,21 @@ export default function AdminGuard({ children }) {
           }
         });
 
-        setIsValid(true);
+        setValid(true);
       } catch {
         localStorage.removeItem("adminToken");
-        setIsValid(false);
+        setValid(false);
       }
 
       setLoading(false);
     };
 
-    verifyToken();
+    verify();
   }, []);
 
   if (loading) return null;
 
-  if (!isValid) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!valid) return <Navigate to="/login" />;
 
   return children;
 }
