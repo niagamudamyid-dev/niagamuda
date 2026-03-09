@@ -13,86 +13,105 @@ export const config = {
   },
 };
 
-// =================
-// MONGODB CONNECT
-// =================
+// ========================
+// MONGODB CONNECTION CACHE
+// ========================
 
 const MONGO_URI = process.env.MONGO_URI;
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null };
+if (!globalThis.mongoose) {
+  globalThis.mongoose = { conn: null };
 }
 
 async function connectDB() {
+  try {
 
-  if (cached.conn) return cached.conn;
+    if (globalThis.mongoose.conn) {
+      return globalThis.mongoose.conn;
+    }
 
-  cached.conn = await mongoose.connect(MONGO_URI, {
-    bufferCommands: false,
-  });
+    globalThis.mongoose.conn = await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-  return cached.conn;
+    return globalThis.mongoose.conn;
+
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    throw error;
+  }
 }
 
-// =================
-// VERIFY ADMIN
-// =================
+// ========================
+// JWT VERIFY
+// ========================
 
 function verifyAdmin(req) {
 
-  const auth = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
-  if (!auth) {
-    throw new Error("Unauthorized");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return false;
   }
 
-  const token = auth.split(" ")[1];
+  const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, process.env.JWT_SECRET);
+  try {
 
+    jwt.verify(token, process.env.JWT_SECRET);
+    return true;
+
+  } catch {
+    return false;
+  }
 }
 
-// =================
+// ========================
 // HANDLER
-// =================
+// ========================
 
 export default async function handler(req, res) {
 
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
   try {
+
+    // ===== CORS FIX =====
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+
+    if (req.method === "OPTIONS") {
+      return res.status(200).end();
+    }
 
     await connectDB();
 
     const { id } = req.query;
 
-    // =================
-    // GET BOOKS
-    // =================
+    // ========================
+    // GET BOOKS (PUBLIC)
+    // ========================
 
     if (req.method === "GET") {
 
-      const books = await Book.find({}).sort({ createdAt: -1 });
+      const books = await Book.find().sort({ createdAt: -1 });
 
       return res.status(200).json(books);
 
     }
 
-    // =================
-    // DELETE
-    // =================
+    // ========================
+    // DELETE BOOK (PROTECTED)
+    // ========================
 
     if (req.method === "DELETE") {
 
-      verifyAdmin(req);
+      if (!verifyAdmin(req)) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
 
       const book = await Book.findById(id);
 
@@ -106,50 +125,114 @@ export default async function handler(req, res) {
 
       await Book.findByIdAndDelete(id);
 
-      return res.status(200).json({ message: "Deleted" });
+      return res.status(200).json({ message: "Deleted successfully" });
 
     }
 
-    // =================
-    // CREATE BOOK
-    // =================
+    // ========================
+    // UPDATE BOOK (PROTECTED)
+    // ========================
 
-    if (req.method === "POST") {
+    if (req.method === "PUT") {
 
-      verifyAdmin(req);
+      if (!verifyAdmin(req)) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
 
       const form = new IncomingForm();
 
       form.parse(req, async (err, fields, files) => {
 
-        if (err) {
-          return res.status(500).json({ error: "Form parse error" });
+        try {
+
+          const book = await Book.findById(id);
+
+          if (!book) {
+            return res.status(404).json({ message: "Book not found" });
+          }
+
+          const updateData = {
+            title: fields.title[0],
+            price: Number(fields.price[0]),
+          };
+
+          if (files.image) {
+
+            if (book.public_id) {
+              await cloudinary.uploader.destroy(book.public_id);
+            }
+
+            const file = files.image[0];
+
+            const result = await cloudinary.uploader.upload(
+              file.filepath,
+              { folder: "books" }
+            );
+
+            updateData.image = result.secure_url;
+            updateData.public_id = result.public_id;
+
+          }
+
+          const updated = await Book.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true }
+          );
+
+          return res.status(200).json(updated);
+
+        } catch (error) {
+
+          console.error(error);
+
+          return res.status(500).json({ error: "Update failed" });
+
         }
+
+      });
+
+      return;
+    }
+
+    // ========================
+    // CREATE BOOK (PROTECTED)
+    // ========================
+
+    if (req.method === "POST") {
+
+      if (!verifyAdmin(req)) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const form = new IncomingForm();
+
+      form.parse(req, async (err, fields, files) => {
 
         try {
 
-          let image = null;
-          let public_id = null;
+          let imageUrl = null;
+          let publicId = null;
 
           if (files.image) {
 
             const file = files.image[0];
 
-            const upload = await cloudinary.uploader.upload(
+            const result = await cloudinary.uploader.upload(
               file.filepath,
               { folder: "books" }
             );
 
-            image = upload.secure_url;
-            public_id = upload.public_id;
+            imageUrl = result.secure_url;
+            publicId = result.public_id;
 
           }
 
           const book = await Book.create({
             title: fields.title[0],
             price: Number(fields.price[0]),
-            image,
-            public_id,
+            image: imageUrl,
+            public_id: publicId,
           });
 
           return res.status(200).json(book);
@@ -165,7 +248,6 @@ export default async function handler(req, res) {
       });
 
       return;
-
     }
 
     res.status(405).json({ message: "Method not allowed" });
