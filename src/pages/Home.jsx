@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import BookCard from "../components/BookCard";
 import { API_URL } from "../config";
-import "../pages/home.css";
+import "./home.css";
 
 export default function Home() {
 
@@ -10,17 +10,24 @@ export default function Home() {
 
   useEffect(() => {
     axios.get(`${API_URL}/api/books`)
-      .then(res => setBooks(res.data))
+      .then(res => {
+        console.log(res.data);
+        setBooks(res.data);
+      })
       .catch(err => console.log(err));
   }, []);
 
   return (
     <div className="home">
 
-      {/* HERO SECTION */}
+      {/* HERO */}
       <section className="hero">
+
         <div className="hero-left">
-          <p className="hero-sub">SELAMAT DATANG DI NIAGAMUDA</p>
+
+          <p className="hero-sub">
+            SELAMAT DATANG DI NIAGAMUDA
+          </p>
 
           <h1>
             Diskon <span>50%</span>
@@ -29,32 +36,42 @@ export default function Home() {
           </h1>
 
           <p className="hero-desc">
-            Temukan berbagai ebook menarik, murah dan terpercaya hanya di Niagamuda.
+            Temukan berbagai ebook murah dan terpercaya.
           </p>
 
           <a href="#books" className="hero-btn">
             Lihat Ebook
           </a>
+
         </div>
 
         <div className="hero-right">
           <img
             src="https://images.unsplash.com/photo-1512820790803-83ca734da794"
-            alt="ebook"
+            alt="books"
           />
         </div>
+
       </section>
 
 
       {/* BOOK SECTION */}
-      <section className="books-container" id="books">
+      <section className="books-section" id="books">
 
-        <h2 className="section-title">Toko Buku 📚</h2>
+        <h2 className="section-title">
+          Toko Buku 📚
+        </h2>
 
-        <div className="grid">
-          {books.map(book => (
-            <BookCard key={book._id} book={book} />
-          ))}
+        <div className="books-grid">
+
+          {books.length === 0 ? (
+            <p>Loading buku...</p>
+          ) : (
+            books.map((book) => (
+              <BookCard key={book._id} book={book} />
+            ))
+          )}
+
         </div>
 
       </section>
