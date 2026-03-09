@@ -100,3 +100,33 @@ width:260px;
 }
 
 }
+
+/* ===============================
+   RESPONSIVE GRID
+================================ */
+
+.grid {
+  display: grid;
+  gap: 24px;
+}
+
+/* 📱 Mobile → 3 */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 📱 Tablet → 4 */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 🖥 Desktop → 5 */
+@media (min-width: 1025px) {
+  .grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
