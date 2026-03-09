@@ -2,9 +2,9 @@
    HOME WRAPPER
 ================================ */
 
-.home {
-  width: 100%;
-  background: #f4f6fb;
+.home{
+  width:100%;
+  background:#f4f6fb;
 }
 
 
@@ -12,51 +12,45 @@
    HERO SECTION
 ================================ */
 
-.hero {
-  max-width: 1300px;
-  margin: auto;
-  padding: 70px 20px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 40px;
-  flex-wrap: wrap;
-  background: #f4f6fb; /* sama dengan body */
+.hero{
+  max-width:1300px;
+  margin:auto;
+  padding:70px 20px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:40px;
+  flex-wrap:wrap;
 }
 
-.hero-left {
-  max-width: 520px;
+.hero-left{
+  max-width:520px;
 }
 
-.hero-left h1 {
-  font-size: 46px;
-  margin-bottom: 15px;
+.hero-left h1{
+  font-size:46px;
+  margin-bottom:15px;
 }
 
-.hero-desc {
-  color: #555;
-  margin-bottom: 25px;
+.hero-desc{
+  color:#555;
+  margin-bottom:25px;
 }
 
-.hero-btn {
-  display: inline-block;
-  background: linear-gradient(135deg,#2563eb,#0ea5e9);
-  color: white;
-  padding: 12px 28px;
-  border-radius: 999px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: .3s;
+.hero-btn{
+  display:inline-block;
+  background:linear-gradient(135deg,#2563eb,#0ea5e9);
+  color:white;
+  padding:12px 28px;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:600;
 }
 
-.hero-btn:hover {
-  transform: translateY(-2px);
-}
-
-.hero-right img {
-  width: 380px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+.hero-right img{
+  width:380px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
 }
 
 
@@ -64,66 +58,82 @@
    BOOK SECTION
 ================================ */
 
-.books-container {
-  max-width: 1300px;
-  margin: auto;
-  padding: 20px;
-  background: #f4f6fb; /* samakan dengan hero */
+.books-container{
+  max-width:1300px;
+  margin:auto;
+  padding:20px;
 }
 
-
-/* Hilangkan tulisan toko buku */
-.books-container h1 {
-  display: none;
+/* sembunyikan judul */
+.books-container h1{
+  display:none;
 }
 
 
 /* ===============================
    GRID FIX
-   (biarkan grid lama dari index.css bekerja)
 ================================ */
 
-.grid {
-  margin-top: 10px;
+.grid{
+  display:grid;
+  gap:24px;
 }
 
 
 /* ===============================
-   HERO RESPONSIVE
+   CARD FIX
 ================================ */
 
-/* tablet */
-@media (max-width: 1024px) {
-
-.hero {
-  flex-direction: column;
-  text-align: center;
+.card{
+  height:auto !important;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
-.hero-left h1 {
-  font-size: 38px;
+.card img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  border-radius:12px;
 }
 
-.hero-right img {
-  width: 300px;
+/* tombol jangan full width */
+.card button{
+  width:100%;
+  margin-top:10px;
+}
+
+
+/* ===============================
+   RESPONSIVE HERO
+================================ */
+
+@media(max-width:1024px){
+
+.hero{
+  flex-direction:column;
+  text-align:center;
+}
+
+.hero-left h1{
+  font-size:38px;
+}
+
+.hero-right img{
+  width:300px;
 }
 
 }
 
+@media(max-width:600px){
 
-/* mobile */
-@media (max-width: 600px) {
-
-.hero {
-  padding-top: 50px;
+.hero-left h1{
+  font-size:30px;
 }
 
-.hero-left h1 {
-  font-size: 30px;
-}
-
-.hero-right img {
-  width: 220px;
+.hero-right img{
+  width:220px;
 }
 
 }
