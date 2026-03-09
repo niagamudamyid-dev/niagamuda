@@ -6,6 +6,7 @@ import { IncomingForm } from "formidable";
 import jwt from "jsonwebtoken";
 import cloudinary from "./cloudinary.js";
 import Book from "./models/Book.js";
+import jwt from "jsonwebtoen";
 
 export const config = {
   api: {
@@ -39,15 +40,19 @@ async function connectDB() {
 function verifyAdmin(req) {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    throw new Error("No token provided");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return false;
   }
 
   const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+    return true;
+  } catch {
+    return false;
+  }
 }
-
 // ========================
 // HANDLER
 // ========================
