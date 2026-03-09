@@ -1,139 +1,102 @@
-/* ===============================
-   HOME WRAPPER
-================================ */
-
 .home{
-  width:100%;
-  background:#f4f6fb;
+width:100%;
 }
 
-
-/* ===============================
-   HERO SECTION
-================================ */
+/* HERO */
 
 .hero{
-  max-width:1300px;
-  margin:auto;
-  padding:70px 20px 40px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:40px;
-  flex-wrap:wrap;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:80px 10%;
+background:#f5f7fb;
+gap:40px;
+flex-wrap:wrap;
 }
 
 .hero-left{
-  max-width:520px;
+max-width:520px;
+}
+
+.hero-sub{
+font-size:14px;
+letter-spacing:2px;
+color:#888;
+margin-bottom:10px;
 }
 
 .hero-left h1{
-  font-size:46px;
-  margin-bottom:15px;
+font-size:50px;
+line-height:1.2;
+margin-bottom:20px;
+}
+
+.hero-left span{
+color:#1f6feb;
 }
 
 .hero-desc{
-  color:#555;
-  margin-bottom:25px;
+color:#555;
+margin-bottom:25px;
 }
 
 .hero-btn{
-  display:inline-block;
-  background:linear-gradient(135deg,#2563eb,#0ea5e9);
-  color:white;
-  padding:12px 28px;
-  border-radius:999px;
-  text-decoration:none;
-  font-weight:600;
+background:#1f6feb;
+color:white;
+padding:12px 28px;
+border-radius:30px;
+text-decoration:none;
+font-weight:600;
+}
+
+.hero-btn:hover{
+background:#0d4edb;
 }
 
 .hero-right img{
-  width:380px;
-  border-radius:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
+width:350px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
 }
 
 
-/* ===============================
-   BOOK SECTION
-================================ */
+/* BOOK SECTION */
 
-.books-container{
-  max-width:1300px;
-  margin:auto;
-  padding:20px;
+.books-section{
+padding:60px 10%;
+background:white;
 }
 
-/* sembunyikan judul */
-.books-container h1{
-  display:none;
+.section-title{
+font-size:32px;
+margin-bottom:40px;
 }
 
 
-/* ===============================
-   GRID FIX
-================================ */
+/* GRID */
 
-.grid{
-  display:grid;
-  gap:24px;
+.books-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:30px;
 }
 
 
-/* ===============================
-   CARD FIX
-================================ */
+/* RESPONSIVE */
 
-.card{
-  height:auto !important;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-
-.card img{
-  width:100%;
-  height:160px;
-  object-fit:cover;
-  border-radius:12px;
-}
-
-/* tombol jangan full width */
-.card button{
-  width:100%;
-  margin-top:10px;
-}
-
-
-/* ===============================
-   RESPONSIVE HERO
-================================ */
-
-@media(max-width:1024px){
+@media(max-width:900px){
 
 .hero{
-  flex-direction:column;
-  text-align:center;
+flex-direction:column;
+text-align:center;
 }
 
 .hero-left h1{
-  font-size:38px;
+font-size:38px;
 }
 
 .hero-right img{
-  width:300px;
-}
-
-}
-
-@media(max-width:600px){
-
-.hero-left h1{
-  font-size:30px;
-}
-
-.hero-right img{
-  width:220px;
+width:260px;
 }
 
 }
