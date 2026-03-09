@@ -59,7 +59,7 @@ export default function Home() {
       <section className="books-section" id="books">
 
         <h2 className="section-title">
-          Toko Buku 📚
+          Buku Favorit
         </h2>
 
         <div className="books-grid">
