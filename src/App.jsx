@@ -1,37 +1,26 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import { useState } from "react";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
-import "./App.css";
 import AdminGuard from "./components/AdminGuard";
+import "./App.css";
 
 export default function App() {
-
-  const [menu,setMenu] = useState(false);
-
   return (
     <BrowserRouter>
 
       <nav className="navbar">
 
-        <div className="nav-inner">
+        <div className="nav-container">
 
           {/* LEFT */}
           <div className="nav-left">
-
-            <button
-              className="hamburger"
-              onClick={()=>setMenu(!menu)}
-            >
-              ☰
-            </button>
 
             <Link to="/" className="logo">
               Niagamuda
             </Link>
 
-            <Link to="/kategori" className="kategori">
+            <Link to="/kategori" className="kategori-btn">
               Kategori
             </Link>
 
@@ -50,14 +39,14 @@ export default function App() {
 
 
           {/* RIGHT */}
-          <div className={`nav-right ${menu ? "show" : ""}`}>
+          <div className="nav-right">
 
             <Link to="/">Home</Link>
             <Link to="/books">Buku</Link>
             <Link to="/terbaru">Terbaru</Link>
             <Link to="/tentang">Tentang</Link>
 
-            <Link to="/login" className="login">
+            <Link to="/login" className="login-btn">
               Login
             </Link>
 
@@ -78,7 +67,7 @@ export default function App() {
           path="/cms-portal-2026"
           element={
             <AdminGuard>
-              <Admin/>
+              <Admin />
             </AdminGuard>
           }
         />
