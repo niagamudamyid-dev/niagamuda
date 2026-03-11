@@ -7,30 +7,30 @@ import AdminGuard from "./components/AdminGuard";
 
 export default function App() {
 
-  const [open,setOpen] = useState(false);
+  const [menu,setMenu] = useState(false);
 
   return (
     <BrowserRouter>
 
       <nav className="navbar">
 
-        <div className="nav-container">
+        <div className="nav-inner">
 
           {/* LEFT */}
           <div className="nav-left">
 
-            <div
+            <button
               className="hamburger"
-              onClick={()=>setOpen(!open)}
+              onClick={()=>setMenu(!menu)}
             >
               ☰
-            </div>
+            </button>
 
             <Link to="/" className="logo">
               Niagamuda
             </Link>
 
-            <Link to="/kategori" className="kategori-btn">
+            <Link to="/kategori" className="kategori">
               Kategori
             </Link>
 
@@ -38,7 +38,7 @@ export default function App() {
 
 
           {/* SEARCH */}
-          <div className="search-box">
+          <div className="nav-search">
 
             <input
               type="text"
@@ -49,14 +49,14 @@ export default function App() {
 
 
           {/* RIGHT */}
-          <div className="nav-right">
+          <div className={`nav-right ${menu ? "show" : ""}`}>
 
             <Link to="/">Home</Link>
             <Link to="/books">Buku</Link>
             <Link to="/terbaru">Terbaru</Link>
             <Link to="/tentang">Tentang</Link>
 
-            <Link to="/login" className="login-btn">
+            <Link to="/login" className="login">
               Login
             </Link>
 
@@ -77,7 +77,7 @@ export default function App() {
           path="/cms-portal-2026"
           element={
             <AdminGuard>
-              <Admin />
+              <Admin/>
             </AdminGuard>
           }
         />
