@@ -11,11 +11,10 @@ export default function App() {
 
       <nav className="navbar">
 
-        <div className="nav-inner">
+        <div className="nav-container">
 
           {/* LEFT */}
           <div className="nav-left">
-
             <Link to="/" className="logo">
               Niagamuda
             </Link>
@@ -23,26 +22,20 @@ export default function App() {
             <Link to="/kategori" className="kategori">
               Kategori
             </Link>
-
           </div>
-
 
           {/* SEARCH */}
           <div className="nav-search">
-
             <span className="search-icon">🔍</span>
 
             <input
               type="text"
               placeholder="Cari ebook..."
             />
-
           </div>
-
 
           {/* RIGHT */}
           <div className="nav-right">
-
             <Link to="/">Home</Link>
             <Link to="/books">Buku</Link>
             <Link to="/terbaru">Terbaru</Link>
@@ -51,13 +44,11 @@ export default function App() {
             <Link to="/login" className="login">
               Login
             </Link>
-
           </div>
 
         </div>
 
       </nav>
-
 
       <Routes>
 
