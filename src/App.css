@@ -1,94 +1,113 @@
 /* =========================
-   NAVBAR
+NAVBAR
 ========================= */
 
 .navbar{
-  width:100%;
-  background:white;
-  box-shadow:0 5px 20px rgba(0,0,0,.05);
-  position:sticky;
-  top:0;
-  z-index:1000;
+background:white;
+border-bottom:1px solid #eee;
+position:sticky;
+top:0;
+z-index:1000;
 }
 
 .nav-container{
-  max-width:1300px;
-  margin:auto;
-  padding:18px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+max-width:1300px;
+margin:auto;
+padding:12px 20px;
+display:flex;
+align-items:center;
+gap:20px;
 }
 
-/* LOGO */
+/* LEFT */
+
+.nav-left{
+display:flex;
+align-items:center;
+gap:15px;
+}
 
 .logo{
-  font-size:22px;
-  font-weight:700;
-  text-decoration:none;
-  color:#2563eb;
+font-size:22px;
+font-weight:700;
+text-decoration:none;
+color:#2563eb;
 }
 
-/* LINKS */
-
-.nav-links{
-  display:flex;
-  gap:28px;
-  align-items:center;
+.kategori-btn{
+background:#f3f4f6;
+padding:6px 14px;
+border-radius:6px;
+text-decoration:none;
+color:#333;
+font-size:14px;
 }
 
-.nav-links a{
-  text-decoration:none;
-  color:#333;
-  font-weight:500;
-  transition:.2s;
+/* SEARCH */
+
+.search-box{
+flex:1;
 }
 
-.nav-links a:hover{
-  color:#2563eb;
+.search-box input{
+width:100%;
+padding:10px 14px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:14px;
+}
+
+/* RIGHT MENU */
+
+.nav-right{
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.nav-right a{
+text-decoration:none;
+color:#333;
+font-size:14px;
+}
+
+.nav-right a:hover{
+color:#2563eb;
 }
 
 /* LOGIN BUTTON */
 
 .login-btn{
-  background:linear-gradient(135deg,#2563eb,#0ea5e9);
-  color:white !important;
-  padding:8px 18px;
-  border-radius:999px;
+background:linear-gradient(135deg,#2563eb,#0ea5e9);
+color:white !important;
+padding:6px 16px;
+border-radius:999px;
 }
 
-/* MOBILE MENU */
+/* HAMBURGER */
 
-.menu-toggle{
-  display:none;
-  font-size:24px;
-  cursor:pointer;
+.hamburger{
+display:none;
+font-size:22px;
+cursor:pointer;
 }
 
 /* =========================
-   RESPONSIVE
+RESPONSIVE
 ========================= */
 
 @media(max-width:900px){
 
-.nav-links{
-  position:absolute;
-  top:70px;
-  right:0;
-  background:white;
-  width:200px;
-  flex-direction:column;
-  padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
-  display:none;
+.search-box{
+display:none;
 }
 
-.nav-links.active{
-  display:flex;
+.nav-right{
+display:none;
 }
 
-.menu-toggle{
-  display:block;
+.hamburger{
+display:block;
 }
 
 }

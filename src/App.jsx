@@ -7,26 +7,52 @@ import AdminGuard from "./components/AdminGuard";
 
 export default function App() {
 
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [open,setOpen] = useState(false);
 
   return (
     <BrowserRouter>
-
-      {/* NAVBAR */}
 
       <nav className="navbar">
 
         <div className="nav-container">
 
-          <Link to="/" className="logo">
-            Niagamuda
-          </Link>
+          {/* LEFT */}
+          <div className="nav-left">
 
-          <div className={`nav-links ${menuOpen ? "active" : ""}`}>
+            <div
+              className="hamburger"
+              onClick={()=>setOpen(!open)}
+            >
+              ☰
+            </div>
+
+            <Link to="/" className="logo">
+              Niagamuda
+            </Link>
+
+            <Link to="/kategori" className="kategori-btn">
+              Kategori
+            </Link>
+
+          </div>
+
+
+          {/* SEARCH */}
+          <div className="search-box">
+
+            <input
+              type="text"
+              placeholder="Cari ebook..."
+            />
+
+          </div>
+
+
+          {/* RIGHT */}
+          <div className="nav-right">
 
             <Link to="/">Home</Link>
             <Link to="/books">Buku</Link>
-            <Link to="/kategori">Kategori</Link>
             <Link to="/terbaru">Terbaru</Link>
             <Link to="/tentang">Tentang</Link>
 
@@ -36,19 +62,10 @@ export default function App() {
 
           </div>
 
-          <div
-            className="menu-toggle"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            ☰
-          </div>
-
         </div>
 
       </nav>
 
-
-      {/* ROUTES */}
 
       <Routes>
 
