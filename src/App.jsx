@@ -3,6 +3,7 @@ import { useState } from "react";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
+import "./App.css";
 import AdminGuard from "./components/AdminGuard";
 
 export default function App() {
