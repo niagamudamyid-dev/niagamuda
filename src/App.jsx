@@ -11,41 +11,28 @@ export default function App() {
 
       <nav className="navbar">
 
-        <div className="nav-container">
+        <div className="nav-left">
+          <Link to="/" className="logo">Niagamuda</Link>
 
-          {/* LEFT */}
-          <div className="nav-left">
-            <Link to="/" className="logo">
-              Niagamuda
-            </Link>
+          <Link to="/kategori" className="kategori">
+            Kategori
+          </Link>
+        </div>
 
-            <Link to="/kategori" className="kategori">
-              Kategori
-            </Link>
-          </div>
+        <div className="nav-search">
+          <span className="search-icon">🔍</span>
+          <input type="text" placeholder="Cari ebook..." />
+        </div>
 
-          {/* SEARCH */}
-          <div className="nav-search">
-            <span className="search-icon">🔍</span>
+        <div className="nav-right">
+          <Link to="/">Home</Link>
+          <Link to="/books">Buku</Link>
+          <Link to="/terbaru">Terbaru</Link>
+          <Link to="/tentang">Tentang</Link>
 
-            <input
-              type="text"
-              placeholder="Cari ebook..."
-            />
-          </div>
-
-          {/* RIGHT */}
-          <div className="nav-right">
-            <Link to="/">Home</Link>
-            <Link to="/books">Buku</Link>
-            <Link to="/terbaru">Terbaru</Link>
-            <Link to="/tentang">Tentang</Link>
-
-            <Link to="/login" className="login">
-              Login
-            </Link>
-          </div>
-
+          <Link to="/login" className="login">
+            Login
+          </Link>
         </div>
 
       </nav>

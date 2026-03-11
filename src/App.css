@@ -1,6 +1,4 @@
-/* =========================
-RESET
-========================= */
+/* RESET */
 
 *{
 box-sizing:border-box;
@@ -11,30 +9,18 @@ margin:0;
 overflow-x:hidden;
 }
 
-/* =========================
-NAVBAR
-========================= */
+/* NAVBAR */
 
 .navbar{
 width:100%;
-background:white;
-border-bottom:1px solid #eee;
-}
-
-/* CONTAINER */
-
-.nav-container{
-max-width:1280px;
-margin:auto;
-
 display:flex;
 align-items:center;
 justify-content:space-between;
 
-gap:16px;
-padding:8px 16px;
+padding:10px 40px;
 
-flex-wrap:nowrap;   /* penting agar tidak turun */
+background:white;
+border-bottom:1px solid #eee;
 }
 
 /* LEFT */
@@ -42,8 +28,7 @@ flex-wrap:nowrap;   /* penting agar tidak turun */
 .nav-left{
 display:flex;
 align-items:center;
-gap:10px;
-flex-shrink:0;
+gap:12px;
 }
 
 .logo{
@@ -55,9 +40,9 @@ text-decoration:none;
 
 .kategori{
 background:#f3f4f6;
-padding:4px 10px;
+padding:5px 12px;
 border-radius:6px;
-font-size:12px;
+font-size:13px;
 text-decoration:none;
 color:#333;
 }
@@ -67,28 +52,27 @@ color:#333;
 .nav-search{
 display:flex;
 align-items:center;
-gap:6px;
+gap:8px;
 
 background:#f5f5f5;
-border-radius:6px;
+border-radius:8px;
 
-padding:4px 8px;
+padding:6px 12px;
 
-flex:1;
-max-width:280px;
+width:320px;
 }
 
 .search-icon{
-font-size:12px;
+font-size:14px;
 opacity:.6;
 }
 
 .nav-search input{
-width:100%;
 border:none;
 background:transparent;
 outline:none;
-font-size:12px;
+width:100%;
+font-size:13px;
 }
 
 /* RIGHT */
@@ -96,14 +80,13 @@ font-size:12px;
 .nav-right{
 display:flex;
 align-items:center;
-gap:14px;
-flex-shrink:0;
+gap:18px;
 }
 
 .nav-right a{
 text-decoration:none;
 color:#333;
-font-size:13px;
+font-size:14px;
 }
 
 .nav-right a:hover{
@@ -115,14 +98,12 @@ color:#2563eb;
 .login{
 background:linear-gradient(135deg,#2563eb,#0ea5e9);
 color:white !important;
-padding:4px 14px;
+padding:6px 16px;
 border-radius:999px;
-font-size:12px;
+font-size:13px;
 }
 
-/* =========================
-RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media(max-width:900px){
 
