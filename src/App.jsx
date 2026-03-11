@@ -11,7 +11,7 @@ export default function App() {
 
       <nav className="navbar">
 
-        <div className="nav-container">
+        <div className="nav-inner">
 
           {/* LEFT */}
           <div className="nav-left">
@@ -20,7 +20,7 @@ export default function App() {
               Niagamuda
             </Link>
 
-            <Link to="/kategori" className="kategori-btn">
+            <Link to="/kategori" className="kategori">
               Kategori
             </Link>
 
@@ -29,6 +29,8 @@ export default function App() {
 
           {/* SEARCH */}
           <div className="nav-search">
+
+            <span className="search-icon">🔍</span>
 
             <input
               type="text"
@@ -46,7 +48,7 @@ export default function App() {
             <Link to="/terbaru">Terbaru</Link>
             <Link to="/tentang">Tentang</Link>
 
-            <Link to="/login" className="login-btn">
+            <Link to="/login" className="login">
               Login
             </Link>
 
