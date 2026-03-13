@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import AdminGuard from "./components/AdminGuard";
+import Footer from "./components/Footer";
 import "./App.css";
 
 export default function App() {
@@ -53,6 +54,8 @@ export default function App() {
         />
 
       </Routes>
+
+      <Footer />
 
     </BrowserRouter>
   );
