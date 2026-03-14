@@ -6,6 +6,18 @@ min-height:100vh;
 background:#f4f7fb;
 font-family:system-ui;
 }
+.grid-admin{
+display:grid;
+grid-template-columns:350px 1fr;
+gap:25px;
+align-items:start;
+}
+
+.table{
+max-height:600px;
+overflow:auto;
+}
+
 
 /* SIDEBAR */
 
@@ -143,10 +155,10 @@ flex-direction:column;
 
 .row{
 display:grid;
-grid-template-columns:80px 1fr 150px;
-align-items:center;
+grid-template-columns:70px 1fr 120px;
 gap:15px;
-padding:15px 10px;
+align-items:center;
+padding:15px 0;
 border-bottom:1px solid #eee;
 }
 
