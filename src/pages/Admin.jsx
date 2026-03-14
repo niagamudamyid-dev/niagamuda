@@ -2,7 +2,7 @@ import { useEffect,useState,useCallback } from "react"
 import axios from "axios"
 import { API_URL } from "../config"
 import "./admin.css"
-import { useCallback } from "react"
+
 
 export default function Admin(){
 
@@ -37,15 +37,31 @@ const fetchBooks = useCallback(async () => {
 
 /* FETCH CATEGORY */
 
-const fetchCategories=async()=>{
-const res=await axios.get(`${API_URL}/api/categories`)
-setCategories(res.data)
+
+// eslint-disable-next-line no-unused-vars
+const fetchCategories = async () => {
+  const res = await axios.get(`${API_URL}/api/categories`)
+  setCategories(res.data)
 }
 
+
 useEffect(() => {
-  fetchBooks()
-  fetchCategories()
-}, [fetchBooks])
+
+const loadData = async () => {
+
+const booksRes = await axios.get(`${API_URL}/api/books`)
+setBooks(booksRes.data)
+
+const catRes = await axios.get(`${API_URL}/api/categories`)
+setCategories(catRes.data)
+
+}
+
+loadData()
+
+}, [])
+
+
 
 
 /* SUBMIT BOOK */
