@@ -6,76 +6,100 @@ import "./home.css";
 
 export default function Home() {
 
-  const [books, setBooks] = useState([]);
+  const [books,setBooks]=useState([])
 
-  useEffect(() => {
+  const categories=[
+    "Novel",
+    "Bisnis",
+    "Self Improvement",
+    "Teknologi",
+    "Komik"
+  ]
+
+  useEffect(()=>{
+
     axios.get(`${API_URL}/api/books`)
-      .then(res => {
-        console.log(res.data);
-        setBooks(res.data);
-      })
-      .catch(err => console.log(err));
-  }, []);
+    .then(res=>setBooks(res.data))
 
-  return (
-    <div className="home">
+  },[])
 
-      {/* HERO */}
-      <section className="hero">
+  return(
 
-        <div className="hero-left">
+<div className="home">
 
-          <p className="hero-sub">
-            SELAMAT DATANG DI NIAGAMUDA
-          </p>
+<section className="hero">
 
-          <h1>
-            Diskon <span>50%</span>
-            <br />
-            Semua Ebook
-          </h1>
+<div className="hero-left">
 
-          <p className="hero-desc">
-            Temukan berbagai ebook murah dan terpercaya.
-          </p>
+<p className="hero-sub">
+SELAMAT DATANG DI NIAGAMUDA
+</p>
 
-          <a href="#books" className="hero-btn">
-            Lihat Ebook
-          </a>
+<h1>
+Diskon <span>50%</span>
+<br/>
+Semua Ebook
+</h1>
 
-        </div>
+<p className="hero-desc">
+Temukan berbagai ebook murah dan terpercaya.
+</p>
 
-        <div className="hero-right">
-          <img
-            src="https://images.unsplash.com/photo-1512820790803-83ca734da794"
-            alt="books"
-          />
-        </div>
+<a href="#books" className="hero-btn">
+Lihat Ebook
+</a>
 
-      </section>
+</div>
+
+<div className="hero-right">
+
+<img
+src="https://images.unsplash.com/photo-1512820790803-83ca734da794"
+/>
+
+</div>
+
+</section>
 
 
-      {/* BOOK SECTION */}
-      <section className="books-section" id="books">
+{categories.map(cat=>{
 
-        <h2 className="section-title">
-          Buku Favorit
-        </h2>
+const filtered=books
+.filter(b=>b.category===cat)
+.slice(0,10)
 
-        <div className="books-grid">
+if(filtered.length===0)return null
 
-          {books.length === 0 ? (
-            <p>Loading buku...</p>
-          ) : (
-            books.map((book) => (
-              <BookCard key={book._id} book={book} />
-            ))
-          )}
+return(
 
-        </div>
+<section className="category-section" key={cat}>
 
-      </section>
+<div className="category-header">
 
-    </div>
-  );
+<h2>{cat}</h2>
+
+<a href={`/kategori/${cat}`}>
+Lihat Semua
+</a>
+
+</div>
+
+<div className="scroll-books">
+
+{filtered.map(book=>(
+<BookCard key={book._id} book={book}/>
+))}
+
+</div>
+
+</section>
+
+)
+
+})}
+
+</div>
+
+)
+
 }

@@ -13,10 +13,6 @@ export const config = {
   },
 };
 
-// =================
-// MONGODB CONNECT
-// =================
-
 const MONGO_URI = process.env.MONGO_URI;
 
 let cached = globalThis.mongoose;
@@ -36,10 +32,6 @@ async function connectDB() {
   return cached.conn;
 }
 
-// =================
-// VERIFY ADMIN
-// =================
-
 function verifyAdmin(req) {
 
   const auth = req.headers.authorization;
@@ -51,12 +43,7 @@ function verifyAdmin(req) {
   const token = auth.split(" ")[1];
 
   jwt.verify(token, process.env.JWT_SECRET);
-
 }
-
-// =================
-// HANDLER
-// =================
 
 export default async function handler(req, res) {
 
@@ -72,23 +59,26 @@ export default async function handler(req, res) {
 
     await connectDB();
 
-    const { id } = req.query;
-
-    // =================
-    // GET BOOKS
-    // =================
+    const { id, category } = req.query;
 
     if (req.method === "GET") {
 
-      const books = await Book.find({}).sort({ createdAt: -1 });
+      if (category) {
+
+        const books = await Book.find({ category })
+          .sort({ createdAt: -1 })
+          .limit(10);
+
+        return res.status(200).json(books);
+
+      }
+
+      const books = await Book.find({})
+        .sort({ createdAt: -1 });
 
       return res.status(200).json(books);
 
     }
-
-    // =================
-    // DELETE
-    // =================
 
     if (req.method === "DELETE") {
 
@@ -110,10 +100,6 @@ export default async function handler(req, res) {
 
     }
 
-    // =================
-    // CREATE BOOK
-    // =================
-
     if (req.method === "POST") {
 
       verifyAdmin(req);
@@ -121,10 +107,6 @@ export default async function handler(req, res) {
       const form = new IncomingForm();
 
       form.parse(req, async (err, fields, files) => {
-
-        if (err) {
-          return res.status(500).json({ error: "Form parse error" });
-        }
 
         try {
 
@@ -146,10 +128,14 @@ export default async function handler(req, res) {
           }
 
           const book = await Book.create({
+
             title: fields.title[0],
             price: Number(fields.price[0]),
+            category: fields.category[0],
+
             image,
             public_id,
+
           });
 
           return res.status(200).json(book);

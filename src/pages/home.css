@@ -100,3 +100,47 @@ width:260px;
 }
 
 }
+
+.category-section{
+
+margin-top:60px;
+
+}
+
+.category-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+
+}
+
+.scroll-books{
+
+display:flex;
+gap:20px;
+overflow-x:auto;
+padding-bottom:10px;
+
+scrollbar-width:none;
+
+}
+
+.scroll-books::-webkit-scrollbar{
+display:none;
+}
+
+.scroll-books .card{
+
+min-width:200px;
+
+}
+
+@media(max-width:768px){
+
+.scroll-books .card{
+min-width:150px;
+}
+
+}

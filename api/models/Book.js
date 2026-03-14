@@ -5,6 +5,12 @@ const BookSchema = new mongoose.Schema(
     title: String,
     price: Number,
     image: String,
+    public_id: String,
+
+    category: {
+      type: String,
+      default: "Umum"
+    }
   },
   { timestamps: true }
 );

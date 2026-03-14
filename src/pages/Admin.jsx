@@ -8,14 +8,15 @@ export default function Admin() {
   useAutoLogout(10 * 60 * 1000); // 10 menit
 
   const adminConfig = {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("adminToken")}`
-  }
-};
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  };
 
   const [books, setBooks] = useState([]);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("Novel");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [editId, setEditId] = useState(null);
@@ -45,6 +46,7 @@ export default function Admin() {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("price", price);
+      formData.append("category", category);
       if (image) formData.append("image", image);
 
       if (editId) {
@@ -55,22 +57,18 @@ export default function Admin() {
         );
         setToast("Buku berhasil diupdate");
       } else {
-        await axios.post(
-          `${API_URL}/api/books`,
-          formData,
-          adminConfig
-        );
+        await axios.post(`${API_URL}/api/books`, formData, adminConfig);
         setToast("Buku berhasil ditambahkan");
       }
 
       setTitle("");
       setPrice("");
+      setCategory("Novel");
       setImage(null);
       setPreview(null);
       setEditId(null);
 
       fetchBooks();
-
     } catch (error) {
       console.error("Submit error:", error);
       setToast("Akses ditolak / Error");
@@ -82,14 +80,10 @@ export default function Admin() {
   // ================= DELETE =================
   const deleteBook = async (id) => {
     try {
-      await axios.delete(
-        `${API_URL}/api/books?id=${id}`,
-        adminConfig
-      );
+      await axios.delete(`${API_URL}/api/books?id=${id}`, adminConfig);
 
       setToast("Buku berhasil dihapus");
       fetchBooks();
-
     } catch (error) {
       console.error("Delete error:", error);
       setToast("Akses ditolak / Gagal hapus");
@@ -98,17 +92,19 @@ export default function Admin() {
     }
   };
 
+  // ================= EDIT =================
   const editBook = (book) => {
     setTitle(book.title);
     setPrice(book.price);
+    setCategory(book.category || "Novel");
     setEditId(book._id);
     setPreview(book.image);
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <div className="admin">
-
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <h2>Niagamuda</h2>
         <nav>
@@ -118,21 +114,22 @@ export default function Admin() {
       </aside>
 
       <main className="main">
-{sidebarOpen && <div className="overlay" onClick={()=>setSidebarOpen(false)}></div>}
+        {sidebarOpen && (
+          <div className="overlay" onClick={() => setSidebarOpen(false)}></div>
+        )}
+
         <header className="topbar">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)}>
-            ☰
-          </button>
+          <button onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
           <h3>Admin Dashboard</h3>
 
           <button
-  onClick={() => {
-    localStorage.removeItem("adminToken");
-    window.location.href = "/login";
-  }}
->
-  Logout
-</button>
+            onClick={() => {
+              localStorage.removeItem("adminToken");
+              window.location.href = "/login";
+            }}
+          >
+            Logout
+          </button>
         </header>
 
         <section className="stats">
@@ -140,17 +137,19 @@ export default function Admin() {
             <p>Total Buku</p>
             <h2>{books.length}</h2>
           </div>
+
           <div className="stat-card">
             <p>Status</p>
             <h2>Online</h2>
           </div>
         </section>
 
+        {/* ================= FORM ================= */}
+
         <section className="card">
           <h2>{editId ? "Update Buku" : "Tambah Buku"}</h2>
 
           <form onSubmit={submitBook} className="form-grid">
-
             <div>
               <label>Judul Buku</label>
               <input
@@ -166,6 +165,18 @@ export default function Admin() {
                 onChange={(e) => setPrice(e.target.value)}
                 required
               />
+
+              <label>Kategori</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option>Novel</option>
+                <option>Bisnis</option>
+                <option>Self Improvement</option>
+                <option>Teknologi</option>
+                <option>Komik</option>
+              </select>
 
               <label>Upload Cover</label>
               <input
@@ -188,26 +199,30 @@ export default function Admin() {
             <button className="primary">
               {editId ? "Update Buku" : "Tambah Buku"}
             </button>
-
           </form>
         </section>
+
+        {/* ================= LIST BUKU ================= */}
 
         <section className="card">
           <h2>Daftar Buku</h2>
 
           <div className="table">
-            {books.map(book => (
+            {books.map((book) => (
               <div key={book._id} className="row">
                 <div className="info">
                   <img src={book.image} alt={book.title} />
+
                   <div>
                     <b>{book.title}</b>
                     <p>Rp {Number(book.price).toLocaleString()}</p>
+                    <small className="category">{book.category}</small>
                   </div>
                 </div>
 
                 <div className="actions">
                   <button onClick={() => editBook(book)}>Edit</button>
+
                   <button
                     className="danger"
                     onClick={() => deleteBook(book._id)}
@@ -218,13 +233,10 @@ export default function Admin() {
               </div>
             ))}
           </div>
-
         </section>
-
       </main>
 
       {toast && <div className="toast">{toast}</div>}
-
     </div>
   );
 }

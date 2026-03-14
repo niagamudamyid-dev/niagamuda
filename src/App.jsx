@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import AdminGuard from "./components/AdminGuard";
 import Footer from "./components/Footer";
 import "./App.css";
+import Category from "./pages/Category"
+
 
 export default function App() {
   return (
@@ -43,6 +45,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
 
         <Route path="/login" element={<Login />} />
+        <Route path="/kategori/:name" element={<Category/>}/>
 
         <Route
           path="/cms-portal-2026"
