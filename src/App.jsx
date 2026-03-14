@@ -1,54 +1,69 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+
 import Home from "./pages/Home";
-import Admin from "./pages/Admin";
 import Login from "./pages/Login";
+import Admin from "./pages/Admin";
+import AdminBooks from "./pages/AdminBooks";
+import AdminAddBook from "./pages/AdminAddBook";
+import Category from "./pages/Category";
+
 import AdminGuard from "./components/AdminGuard";
 import Footer from "./components/Footer";
+
 import "./App.css";
-import Category from "./pages/Category"
 
 
-export default function App() {
+function Layout() {
+
+  const location = useLocation();
+
+  const isAdmin =
+    location.pathname.startsWith("/cms-portal-2026");
+
   return (
-    <BrowserRouter>
+    <>
 
-      <nav className="navbar">
+      {/* NAVBAR hanya untuk website */}
 
-        <div className="nav-left">
-          <Link to="/" className="logo">Niagamuda</Link>
+      {!isAdmin && (
+        <nav className="navbar">
 
-          <Link to="/kategori" className="kategori">
-            Kategori
-          </Link>
-        </div>
+          <div className="nav-left">
+            <Link to="/" className="logo">Niagamuda</Link>
 
-        <div className="nav-search">
-          <span className="search-icon">🔍</span>
-          <input type="text" placeholder="Cari ebook..." />
-        </div>
+            <Link to="/kategori/fiksi" className="kategori">
+              Kategori
+            </Link>
+          </div>
 
-        <div className="nav-right">
-          <Link to="/">Home</Link>
-          <Link to="/books">Buku</Link>
-          <Link to="/terbaru">Terbaru</Link>
-          <Link to="/tentang">Tentang</Link>
+          <div className="nav-search">
+            <span className="search-icon">🔍</span>
+            <input type="text" placeholder="Cari ebook..." />
+          </div>
 
-          <Link to="/login" className="login">
-            Login
-          </Link>
-        </div>
+          <div className="nav-right">
+            <Link to="/">Home</Link>
+            <Link to="/books">Buku</Link>
+            <Link to="/terbaru">Terbaru</Link>
+            <Link to="/tentang">Tentang</Link>
 
-      </nav>
+            <Link to="/login" className="login">
+              Login
+            </Link>
+          </div>
+
+        </nav>
+      )}
 
       <Routes>
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin/books" element={<AdminBooks />} />
-        <Route path="/admin/add-book" element={<AdminAddBook />} />
+
+        {/* WEBSITE */}
 
         <Route path="/" element={<Home />} />
-
         <Route path="/login" element={<Login />} />
-        <Route path="/kategori/:name" element={<Category/>}/>
+        <Route path="/kategori/:name" element={<Category />} />
+
+        {/* ADMIN */}
 
         <Route
           path="/cms-portal-2026"
@@ -59,10 +74,39 @@ export default function App() {
           }
         />
 
+        <Route
+          path="/cms-portal-2026/books"
+          element={
+            <AdminGuard>
+              <AdminBooks />
+            </AdminGuard>
+          }
+        />
+
+        <Route
+          path="/cms-portal-2026/add-book"
+          element={
+            <AdminGuard>
+              <AdminAddBook />
+            </AdminGuard>
+          }
+        />
+
       </Routes>
 
-      <Footer />
+      {/* FOOTER hanya website */}
 
+      {!isAdmin && <Footer />}
+
+    </>
+  );
+}
+
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Layout />
     </BrowserRouter>
   );
 }
