@@ -41,6 +41,9 @@ export default function App() {
       </nav>
 
       <Routes>
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/books" element={<AdminBooks />} />
+        <Route path="/admin/add-book" element={<AdminAddBook />} />
 
         <Route path="/" element={<Home />} />
 
