@@ -32,8 +32,6 @@ return(
 
 <section className="hero">
 
-<div className="hero-container">
-
 <div className="hero-left">
 
 <p className="hero-sub">
@@ -41,7 +39,8 @@ SELAMAT DATANG DI NIAGAMUDA
 </p>
 
 <h1>
-Diskon 50% <br/>
+Diskon <span>50%</span>
+<br/>
 Semua Ebook
 </h1>
 
@@ -49,7 +48,7 @@ Semua Ebook
 Temukan berbagai ebook murah dan terpercaya.
 </p>
 
-<a href="/books" className="hero-btn">
+<a href="#books" className="hero-btn">
 Lihat Ebook
 </a>
 
@@ -58,18 +57,12 @@ Lihat Ebook
 <div className="hero-right">
 
 <img
-
 src="https://images.unsplash.com/photo-1512820790803-83ca734da794"
-alt="ebook"/>
-
-
-
-</div>
+/>
 
 </div>
 
 </section>
-
 
 
 {/* CATEGORY */}
