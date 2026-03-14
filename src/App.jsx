@@ -10,6 +10,7 @@ import AdminAddBook from "./pages/AdminAddBook";
 
 import AdminGuard from "./components/AdminGuard";
 import Footer from "./components/Footer";
+import AdminCategory from "./pages/AdminCategory"
 
 import "./App.css";
 
@@ -103,7 +104,7 @@ element={
 </AdminGuard>
 }
 />
-
+<Route path="/admin/category" element={<AdminCategory />} />
 </Routes>
 
 {/* FOOTER HANYA WEBSITE */}

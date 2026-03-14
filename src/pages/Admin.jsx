@@ -6,13 +6,21 @@ import AdminLayout from "../components/AdminLayout"
 export default function Admin(){
 
 const [books,setBooks] = useState([])
+const [categories,setCategories] = useState([])
 
 useEffect(()=>{
 
-axios.get(`${API_URL}/api/books`)
-.then(res=>{
-setBooks(res.data)
-})
+const load = async()=>{
+
+const booksRes = await axios.get(`${API_URL}/api/books`)
+setBooks(booksRes.data)
+
+const catRes = await axios.get(`${API_URL}/api/categories`)
+setCategories(catRes.data)
+
+}
+
+load()
 
 },[])
 
@@ -20,19 +28,23 @@ return(
 
 <AdminLayout>
 
-<section className="stats">
+<div className="dashboard">
 
-<div className="stat-card">
-<p>Total Buku</p>
-<h2>{books.length}</h2>
+<div className="stat">
+
+<h3>Total Buku</h3>
+<h1>{books.length}</h1>
+
 </div>
 
-<div className="stat-card">
-<p>Status</p>
-<h2>Online</h2>
+<div className="stat">
+
+<h3>Total Kategori</h3>
+<h1>{categories.length}</h1>
+
 </div>
 
-</section>
+</div>
 
 </AdminLayout>
 

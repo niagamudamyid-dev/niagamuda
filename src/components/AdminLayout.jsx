@@ -25,6 +25,10 @@ Daftar Buku
 Tambah Buku
 </button>
 
+<button onClick={()=>navigate("/admin/category")}>
+Kategori
+</button>
+
 </aside>
 
 <main className="main">
