@@ -2,6 +2,7 @@ import { useEffect,useState } from "react"
 import axios from "axios"
 import { API_URL } from "../config"
 import AdminLayout from "../components/AdminLayout"
+import "./admin.css"
 
 export default function Admin(){
 
@@ -28,16 +29,16 @@ return(
 
 <AdminLayout>
 
-<div className="dashboard">
+<div className="admin-dashboard">
 
-<div className="stat">
+<div className="admin-stat">
 
 <h3>Total Buku</h3>
 <h1>{books.length}</h1>
 
 </div>
 
-<div className="stat">
+<div className="admin-stat">
 
 <h3>Total Kategori</h3>
 <h1>{categories.length}</h1>
