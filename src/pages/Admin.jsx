@@ -1,381 +1,324 @@
-import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
-import { API_URL } from "../config";
-import "./admin.css";
-import useAutoLogout from "../components/useAutoLogout";
-
-export default function Admin() {
-  useAutoLogout(10 * 60 * 1000);
-
-  const adminConfig = {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
-  };
-
-  const [books, setBooks] = useState([]);
-
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
-
-  const [editId, setEditId] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [toast, setToast] = useState(null);
-
-  // ===== CATEGORY STATE =====
-
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
-  const [subcategory, setSubcategory] = useState("");
-
-  const [newCategory, setNewCategory] = useState("");
-  const [parentCategory, setParentCategory] = useState("");
-
-  // ================= FETCH BOOKS =================
-
-  const fetchBooks = useCallback(async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/books`);
-      setBooks(res.data);
-    } catch (error) {
-      console.error(error);
-      setToast("Gagal mengambil data buku");
-    }
-  }, []);
-
-  // ================= FETCH CATEGORIES =================
-
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/categories`);
-      setCategories(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchBooks();
-    fetchCategories();
-  }, []);
-
-  // ================= SUBMIT BOOK =================
-
-  const submitBook = async (e) => {
-    e.preventDefault();
-
-    try {
-      const formData = new FormData();
-
-      formData.append("title", title);
-      formData.append("price", price);
-      formData.append("category", category);
-      formData.append("subcategory", subcategory);
-
-      if (image) formData.append("image", image);
-
-      if (editId) {
-        await axios.put(
-          `${API_URL}/api/books?id=${editId}`,
-          formData,
-          adminConfig
-        );
-
-        setToast("Buku berhasil diupdate");
-      } else {
-        await axios.post(`${API_URL}/api/books`, formData, adminConfig);
-
-        setToast("Buku berhasil ditambahkan");
-      }
+import { useEffect,useState,useCallback } from "react"
+import axios from "axios"
+import { API_URL } from "../config"
+import "./admin.css"
+import { useCallback } from "react"
 
-      setTitle("");
-      setPrice("");
-      setCategory("");
-      setSubcategory("");
-      setImage(null);
-      setPreview(null);
-      setEditId(null);
+export default function Admin(){
 
-      fetchBooks();
-    } catch (error) {
-      console.error(error);
-      setToast("Error saat menyimpan buku");
-    } finally {
-      setTimeout(() => setToast(null), 3000);
-    }
-  };
+const [books,setBooks]=useState([])
+const [categories,setCategories]=useState([])
 
-  // ================= DELETE =================
+const [title,setTitle]=useState("")
+const [price,setPrice]=useState("")
+const [category,setCategory]=useState("")
+const [subcategory,setSubcategory]=useState("")
 
-  const deleteBook = async (id) => {
-    try {
-      await axios.delete(`${API_URL}/api/books?id=${id}`, adminConfig);
+const [image,setImage]=useState(null)
+const [preview,setPreview]=useState(null)
 
-      setToast("Buku berhasil dihapus");
+const [loading,setLoading]=useState(false)
 
-      fetchBooks();
-    } catch (error) {
-      console.error(error);
-      setToast("Gagal menghapus buku");
-    } finally {
-      setTimeout(() => setToast(null), 3000);
-    }
-  };
-
-  // ================= EDIT =================
-
-  const editBook = (book) => {
-    setTitle(book.title);
-    setPrice(book.price);
-    setCategory(book.category || "");
-    setSubcategory(book.subcategory || "");
-
-    setEditId(book._id);
-    setPreview(book.image);
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+const adminConfig={
+headers:{
+Authorization:`Bearer ${localStorage.getItem("adminToken")}`
+}
+}
 
-  return (
-    <div className="admin">
+/* FETCH BOOKS */
 
-      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <h2>Niagamuda</h2>
 
-        <nav>
-          <button className="active">Dashboard</button>
-          <button>Kelola Buku</button>
-        </nav>
-      </aside>
 
-      <main className="main">
+const fetchBooks = useCallback(async () => {
+  const res = await axios.get(`${API_URL}/api/books`)
+  setBooks(res.data)
+}, [])
 
-        {sidebarOpen && (
-          <div className="overlay" onClick={() => setSidebarOpen(false)} />
-        )}
 
-        <header className="topbar">
+/* FETCH CATEGORY */
 
-          <button onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
+const fetchCategories=async()=>{
+const res=await axios.get(`${API_URL}/api/categories`)
+setCategories(res.data)
+}
 
-          <h3>Admin Dashboard</h3>
+useEffect(() => {
+  fetchBooks()
+  fetchCategories()
+}, [fetchBooks])
 
-          <button
-            onClick={() => {
-              localStorage.removeItem("adminToken");
-              window.location.href = "/login";
-            }}
-          >
-            Logout
-          </button>
 
-        </header>
+/* SUBMIT BOOK */
 
-        <section className="stats">
-
-          <div className="stat-card">
-            <p>Total Buku</p>
-            <h2>{books.length}</h2>
-          </div>
+const submitBook=async(e)=>{
 
-          <div className="stat-card">
-            <p>Status</p>
-            <h2>Online</h2>
-          </div>
+e.preventDefault()
 
-        </section>
+if(loading) return
 
-        {/* ================= CREATE CATEGORY ================= */}
+setLoading(true)
 
-        <section className="card">
+try{
 
-          <h2>Buat Kategori</h2>
+const formData=new FormData()
 
-          <input
-            placeholder="Nama kategori"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-          />
+formData.append("title",title)
+formData.append("price",price)
+formData.append("category",category)
+formData.append("subcategory",subcategory)
 
-          <select
-            value={parentCategory}
-            onChange={(e) => setParentCategory(e.target.value)}
-          >
-            <option value="">Kategori Utama</option>
+if(image){
+formData.append("image",image)
+}
 
-            {categories.map((c) => (
-              <option key={c._id} value={c.slug}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+await axios.post(
+`${API_URL}/api/books`,
+formData,
+adminConfig
+)
 
-          <button
-            onClick={async () => {
-              await axios.post(
-                `${API_URL}/api/categories`,
-                {
-                  name: newCategory,
-                  parent: parentCategory,
-                },
-                adminConfig
-              );
+setTitle("")
+setPrice("")
+setImage(null)
+setPreview(null)
 
-              setNewCategory("");
-              setParentCategory("");
+fetchBooks()
 
-              fetchCategories();
-            }}
-          >
-            Tambah Kategori
-          </button>
+}catch(err){
+console.log(err)
+}
 
-        </section>
+setLoading(false)
 
-        {/* ================= FORM BOOK ================= */}
+}
 
-        <section className="card">
+/* DELETE */
 
-          <h2>{editId ? "Update Buku" : "Tambah Buku"}</h2>
+const deleteBook=async(id)=>{
 
-          <form onSubmit={submitBook} className="form-grid">
+await axios.delete(
+`${API_URL}/api/books?id=${id}`,
+adminConfig
+)
 
-            <div>
+fetchBooks()
 
-              <label>Judul Buku</label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
+}
 
-              <label>Harga</label>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                required
-              />
+return(
 
-              <label>Kategori</label>
+<div className="admin">
 
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
+<aside className="sidebar">
+<h2>Niagamuda</h2>
 
-                <option value="">Pilih kategori</option>
+<button className="active">Dashboard</button>
+<button>Kelola Buku</button>
 
-                {categories
-                  .filter((c) => !c.parent)
-                  .map((cat) => (
-                    <option key={cat.slug} value={cat.slug}>
-                      {cat.name}
-                    </option>
-                  ))}
+</aside>
 
-              </select>
+<main className="main">
 
-              <label>Sub Kategori</label>
+<header className="topbar">
 
-              <select
-                value={subcategory}
-                onChange={(e) => setSubcategory(e.target.value)}
-              >
+<h3>Admin Dashboard</h3>
 
-                <option value="">Tidak ada</option>
+<button
+className="danger"
+onClick={()=>{
+localStorage.removeItem("adminToken")
+window.location.href="/login"
+}}
+>
+Logout
+</button>
 
-                {categories
-                  .filter((c) => c.parent === category)
-                  .map((cat) => (
-                    <option key={cat.slug} value={cat.slug}>
-                      {cat.name}
-                    </option>
-                  ))}
+</header>
 
-              </select>
+{/* STATS */}
 
-              <label>Upload Cover</label>
+<section className="stats">
 
-              <input
-                type="file"
-                onChange={(e) => {
-                  const file = e.target.files[0];
+<div className="stat-card">
+<p>Total Buku</p>
+<h2>{books.length}</h2>
+</div>
 
-                  setImage(file);
+<div className="stat-card">
+<p>Status</p>
+<h2>Online</h2>
+</div>
 
-                  if (file) setPreview(URL.createObjectURL(file));
-                }}
-              />
+</section>
 
-              {preview && <img src={preview} className="preview" />}
+{/* GRID */}
 
-            </div>
+<div className="dashboard-grid">
 
-            <button className="primary">
-              {editId ? "Update Buku" : "Tambah Buku"}
-            </button>
+{/* FORM */}
 
-          </form>
+<div className="card">
 
-        </section>
+<h2>Tambah Buku</h2>
 
-        {/* ================= LIST BOOK ================= */}
+<form
+onSubmit={submitBook}
+className="form-grid"
+>
 
-        <section className="card">
+<label>Judul Buku</label>
+<input
+value={title}
+onChange={e=>setTitle(e.target.value)}
+required
+/>
 
-          <h2>Daftar Buku</h2>
+<label>Harga</label>
+<input
+type="number"
+value={price}
+onChange={e=>setPrice(e.target.value)}
+required
+/>
 
-          <div className="table">
+<label>Kategori</label>
+<select
+value={category}
+onChange={e=>setCategory(e.target.value)}
+>
+<option value="">Pilih kategori</option>
 
-            {books.map((book) => (
+{categories
+.filter(c=>!c.parent)
+.map(cat=>(
+<option
+key={cat.slug}
+value={cat.slug}
+>
+{cat.name}
+</option>
+))}
 
-              <div key={book._id} className="row">
+</select>
 
-                <div className="info">
+<label>Subkategori</label>
 
-                  <img src={book.image} alt={book.title} />
+<select
+value={subcategory}
+onChange={e=>setSubcategory(e.target.value)}
+>
 
-                  <div>
+<option value="">Tidak ada</option>
 
-                    <b>{book.title}</b>
+{categories
+.filter(c=>c.parent===category)
+.map(cat=>(
+<option
+key={cat.slug}
+value={cat.slug}
+>
+{cat.name}
+</option>
+))}
 
-                    <p>Rp {Number(book.price).toLocaleString()}</p>
+</select>
 
-                    <small>{book.category}</small>
+<label>Upload Cover</label>
 
-                  </div>
+<input
+type="file"
+onChange={e=>{
+const file=e.target.files[0]
+setImage(file)
 
-                </div>
+if(file){
+setPreview(URL.createObjectURL(file))
+}
+}}
+/>
 
-                <div className="actions">
+{preview && (
+<img
+src={preview}
+className="preview"
+/>
+)}
 
-                  <button onClick={() => editBook(book)}>Edit</button>
+<button
+className="primary"
+disabled={loading}
+>
+{loading ? "Uploading..." : "Tambah Buku"}
+</button>
 
-                  <button
-                    className="danger"
-                    onClick={() => deleteBook(book._id)}
-                  >
-                    Delete
-                  </button>
+</form>
 
-                </div>
+</div>
 
-              </div>
+{/* BOOK LIST */}
 
-            ))}
+<div className="card">
 
-          </div>
+<h2>Daftar Buku</h2>
 
-        </section>
+<div className="table">
 
-      </main>
+{books.map(book=>(
 
-      {toast && <div className="toast">{toast}</div>}
+<div
+key={book._id}
+className="row"
+>
 
-    </div>
-  );
+<img
+src={book.image}
+/>
+
+<div>
+
+<div className="book-title">
+{book.title}
+</div>
+
+<div className="book-price">
+Rp {Number(book.price).toLocaleString()}
+</div>
+
+<div>
+{book.category}
+</div>
+
+</div>
+
+<div className="actions">
+
+<button>
+Edit
+</button>
+
+<button
+className="danger"
+onClick={()=>deleteBook(book._id)}
+>
+Delete
+</button>
+
+</div>
+
+</div>
+
+))}
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+)
+
 }
