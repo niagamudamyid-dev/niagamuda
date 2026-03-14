@@ -19,12 +19,16 @@ axios.get(`${API_URL}/api/books`)
 
 },[])
 
-const parentCategories=
+const parentCategories =
 categories.filter(c=>!c.parent)
 
 return(
 
+<div className="home">
+
 <div className="home-container">
+
+{/* HERO */}
 
 <section className="hero">
 
@@ -60,9 +64,12 @@ src="https://images.unsplash.com/photo-1512820790803-83ca734da794"
 
 </section>
 
+
+{/* CATEGORY */}
+
 {parentCategories.map(cat=>{
 
-const filtered=
+const filtered =
 books
 .filter(b=>b.category===cat.slug)
 .slice(0,10)
@@ -102,6 +109,8 @@ book={book}
 )
 
 })}
+
+</div>
 
 </div>
 

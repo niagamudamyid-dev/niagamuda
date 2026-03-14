@@ -1,18 +1,28 @@
 export default function BookCard({ book }) {
-  return (
-    <div className="card">
-      <img
-  src={book.image || "https://via.placeholder.com/300x400"}
-  alt={book.title}
+
+return (
+
+<div className="card">
+
+<img
+src={book.image || "https://via.placeholder.com/300x400"}
+alt={book.title}
 />
 
-      <h3>{book.title}</h3>
+<div className="card-sub">
+{book.subcategory || book.category}
+</div>
 
-      <p className="price">
-        Rp {book.price.toLocaleString()}
-      </p>
+<div className="card-title">
+{book.title}
+</div>
 
-      <button>Add to Cart</button>
-    </div>
-  );
+<div className="card-price">
+Rp {Number(book.price).toLocaleString()}
+</div>
+
+</div>
+
+)
+
 }

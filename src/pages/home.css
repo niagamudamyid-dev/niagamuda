@@ -1,11 +1,14 @@
 .home{
 width:100%;
+background:#f5f7fb;
 }
+
+/* CONTAINER */
 
 .home-container{
 max-width:1200px;
 margin:auto;
-padding:20px;
+padding:0 20px;
 }
 
 /* HERO */
@@ -14,11 +17,9 @@ padding:20px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-gap:40px;
-padding:80px 10%;
-background:#f5f7fb;
+gap:60px;
+padding:80px 0;
 flex-wrap:wrap;
-margin-bottom:60px;
 }
 
 .hero-left{
@@ -26,16 +27,19 @@ max-width:520px;
 }
 
 .hero-sub{
-font-size:14px;
+font-size:13px;
 letter-spacing:2px;
-color:#888;
+color:#9aa0a6;
 margin-bottom:10px;
+font-weight:500;
 }
 
 .hero-left h1{
-font-size:50px;
+font-size:52px;
 line-height:1.2;
 margin-bottom:20px;
+font-weight:700;
+color:#111;
 }
 
 .hero-left span{
@@ -43,8 +47,9 @@ color:#1f6feb;
 }
 
 .hero-desc{
-color:#555;
+color:#6b7280;
 margin-bottom:25px;
+font-size:15px;
 }
 
 .hero-btn{
@@ -54,76 +59,117 @@ padding:12px 28px;
 border-radius:30px;
 text-decoration:none;
 font-weight:600;
+display:inline-block;
+transition:0.3s;
 }
 
 .hero-btn:hover{
 background:#0d4edb;
+transform:translateY(-2px);
 }
 
 .hero-right img{
-width:350px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
+width:380px;
+border-radius:18px;
+box-shadow:0 15px 35px rgba(0,0,0,0.15);
 }
 
-.hero img{
-width:350px;
-border-radius:15px;
-}
-
-
-/* BOOK SECTION */
-
-.books-section{
-padding:60px 10%;
-background:#f5f7fb;
-}
-
-/* hilangkan tulisan Toko Buku */
-.section-title{
-
-}
-
-/* GRID */
-
-.books-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:30px;
-}
-
-/* CATEGORY SECTION */
+/* CATEGORY */
 
 .category-section{
-margin-top:60px;
-margin-bottom:60px;
+margin-bottom:70px;
 }
 
 .category-header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:20px;
+margin-bottom:25px;
 }
 
-/* SCROLL BOOK */
+.category-header h2{
+font-size:24px;
+font-weight:700;
+color:#111;
+}
+
+.category-header a{
+font-size:14px;
+color:#1f6feb;
+text-decoration:none;
+font-weight:600;
+}
+
+.category-header a:hover{
+text-decoration:underline;
+}
+
+/* SCROLL */
 
 .scroll-books{
 display:flex;
-gap:20px;
+gap:22px;
 overflow-x:auto;
 padding-bottom:10px;
-scrollbar-width:none;
+scroll-behavior:smooth;
 }
 
 .scroll-books::-webkit-scrollbar{
 display:none;
 }
 
-.scroll-books .card{
+/* BOOK CARD */
+
+.card{
 min-width:200px;
+background:white;
+border-radius:16px;
+padding:14px;
+box-shadow:0 8px 20px rgba(0,0,0,0.05);
+transition:0.25s;
+cursor:pointer;
 }
 
+.card:hover{
+transform:translateY(-6px);
+box-shadow:0 14px 30px rgba(0,0,0,0.12);
+}
+
+.card img{
+width:100%;
+height:230px;
+object-fit:cover;
+border-radius:12px;
+margin-bottom:12px;
+}
+
+/* SUBCATEGORY */
+
+.card-sub{
+font-size:12px;
+color:#1f6feb;
+font-weight:600;
+margin-bottom:4px;
+letter-spacing:0.5px;
+}
+
+/* TITLE */
+
+.card-title{
+font-size:15px;
+font-weight:600;
+color:#111;
+margin-bottom:8px;
+line-height:1.4;
+}
+
+/* PRICE */
+
+.card-price{
+font-size:16px;
+font-weight:700;
+color:#111;
+}
 
 /* RESPONSIVE */
 
@@ -146,13 +192,24 @@ width:260px;
 
 @media(max-width:768px){
 
-.hero{
-flex-direction:column;
-text-align:center;
+.scroll-books{
+gap:14px;
 }
 
-.scroll-books .card{
+.card{
 min-width:150px;
+}
+
+.card img{
+height:180px;
+}
+
+.card-title{
+font-size:14px;
+}
+
+.card-price{
+font-size:15px;
 }
 
 }
