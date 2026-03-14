@@ -7,7 +7,7 @@ return (
 <div className="card-cover">
 
 <img
-src={book.image || "https://via.placeholder.com/300x400"}
+src={book.image || "https://via.placeholder.com/300x450"}
 alt={book.title}
 />
 
