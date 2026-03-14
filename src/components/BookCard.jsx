@@ -2,9 +2,9 @@ export default function BookCard({ book }) {
 
 return (
 
-<div className="home-card">
+<div className="card">
 
-<div className="home-card-cover">
+<div className="card-cover">
 
 <img
 src={book.image || "https://via.placeholder.com/300x450"}
@@ -13,15 +13,15 @@ alt={book.title}
 
 </div>
 
-<div className="home-card-sub">
+<div className="card-sub">
 {book.subcategory || book.category}
 </div>
 
-<div className="home-card-title">
+<div className="card-title">
 {book.title}
 </div>
 
-<div className="home-card-price">
+<div className="card-price">
 Rp {Number(book.price).toLocaleString()}
 </div>
 
