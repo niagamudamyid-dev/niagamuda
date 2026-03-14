@@ -9,14 +9,6 @@ margin:0;
 overflow-x:hidden;
 }
 
-/* GLOBAL CONTAINER */
-
-.container{
-max-width:1200px;
-margin:auto;
-padding:0 20px;
-}
-
 /* NAVBAR */
 
 .navbar{
