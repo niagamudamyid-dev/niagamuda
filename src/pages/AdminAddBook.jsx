@@ -16,20 +16,87 @@ const [preview,setPreview] = useState(null)
 
 const [loading,setLoading] = useState(false)
 
+const [newCategory,setNewCategory] = useState("")
+const [newSubCategory,setNewSubCategory] = useState("")
+
 const adminConfig = {
 headers:{
 Authorization:`Bearer ${localStorage.getItem("adminToken")}`
 }
 }
 
-useEffect(()=>{
+const loadCategories = ()=>{
 
 axios.get(`${API_URL}/api/categories`)
 .then(res=>{
 setCategories(res.data)
 })
 
+}
+
+useEffect(()=>{
+
+loadCategories()
+
 },[])
+
+/* ======================
+CREATE CATEGORY
+====================== */
+
+const createCategory = async()=>{
+
+try{
+
+await axios.post(`${API_URL}/api/categories`,{
+name:newCategory
+},adminConfig)
+
+alert("Kategori dibuat")
+
+setNewCategory("")
+
+loadCategories()
+
+}catch(err){
+
+console.log(err)
+
+}
+
+}
+
+/* ======================
+CREATE SUB CATEGORY
+====================== */
+
+const createSubCategory = async()=>{
+
+if(!category){
+alert("Pilih kategori utama dulu")
+return
+}
+
+try{
+
+await axios.post(`${API_URL}/api/categories`,{
+name:newSubCategory,
+parent:category
+},adminConfig)
+
+alert("Sub kategori dibuat")
+
+setNewSubCategory("")
+
+loadCategories()
+
+}catch(err){
+
+console.log(err)
+
+}
+
+}
 
 const submitBook = async(e)=>{
 
@@ -119,6 +186,24 @@ onChange={e=>setCategory(e.target.value)}
 
 </select>
 
+{/* ===== BUAT KATEGORI BARU ===== */}
+
+<label>Buat Kategori Baru</label>
+
+<div className="category-box">
+
+<input
+placeholder="Kategori baru"
+value={newCategory}
+onChange={(e)=>setNewCategory(e.target.value)}
+/>
+
+<button type="button" onClick={createCategory}>
+Tambah
+</button>
+
+</div>
+
 <label>Subkategori</label>
 
 <select
@@ -137,6 +222,24 @@ onChange={e=>setSubcategory(e.target.value)}
 ))}
 
 </select>
+
+{/* ===== BUAT SUB KATEGORI ===== */}
+
+<label>Buat Subkategori Baru</label>
+
+<div className="category-box">
+
+<input
+placeholder="Subkategori baru"
+value={newSubCategory}
+onChange={(e)=>setNewSubCategory(e.target.value)}
+/>
+
+<button type="button" onClick={createSubCategory}>
+Tambah
+</button>
+
+</div>
 
 <label>Upload Cover</label>
 

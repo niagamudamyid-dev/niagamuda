@@ -9,77 +9,129 @@ const MONGO_URI = process.env.MONGO_URI;
 
 let cached = globalThis.mongoose;
 
-if(!cached){
-cached = globalThis.mongoose={conn:null};
+if (!cached) {
+  cached = globalThis.mongoose = { conn: null };
 }
 
-async function connectDB(){
+async function connectDB() {
 
-if(cached.conn) return cached.conn;
+  if (cached.conn) return cached.conn;
 
-cached.conn = await mongoose.connect(MONGO_URI,{
-bufferCommands:false
-});
+  cached.conn = await mongoose.connect(MONGO_URI, {
+    bufferCommands: false
+  });
 
-return cached.conn;
-
+  return cached.conn;
 }
 
-function verifyAdmin(req){
+/* ======================
+   VERIFY ADMIN
+====================== */
 
-const auth=req.headers.authorization;
+function verifyAdmin(req) {
 
-if(!auth) throw new Error("Unauthorized");
+  const auth = req.headers.authorization;
 
-const token=auth.split(" ")[1];
+  if (!auth) {
+    throw new Error("Unauthorized");
+  }
 
-jwt.verify(token,process.env.JWT_SECRET);
+  const token = auth.split(" ")[1];
 
-}
-
-export default async function handler(req,res){
-
-await connectDB();
-
-const {id}=req.query;
-
-if(req.method==="GET"){
-
-const categories=await Category.find({})
-.sort({createdAt:-1});
-
-return res.json(categories);
+  jwt.verify(token, process.env.JWT_SECRET);
 
 }
 
-if(req.method==="POST"){
+/* ======================
+   HANDLER
+====================== */
 
-verifyAdmin(req);
+export default async function handler(req, res) {
 
-const {name,parent}=req.body;
+  await connectDB();
 
-const slug=name
-.toLowerCase()
-.replace(/\s+/g,"-");
+  const { id } = req.query;
 
-const cat=await Category.create({
-name,
-slug,
-parent:parent||null
-});
+  try {
 
-return res.json(cat);
+    /* ======================
+       GET ALL CATEGORY
+    ====================== */
 
-}
+    if (req.method === "GET") {
 
-if(req.method==="DELETE"){
+      const categories = await Category.find({})
+        .sort({ createdAt: -1 });
 
-verifyAdmin(req);
+      return res.json(categories);
 
-await Category.findByIdAndDelete(id);
+    }
 
-return res.json({message:"deleted"});
+    /* ======================
+       CREATE CATEGORY
+    ====================== */
 
-}
+    if (req.method === "POST") {
+
+      verifyAdmin(req);
+
+      const { name, parent } = req.body;
+
+      if (!name) {
+        return res.status(400).json({ message: "Name required" });
+      }
+
+      const slug = name
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-");
+
+      /* CEK DUPLIKAT */
+
+      const exists = await Category.findOne({ slug });
+
+      if (exists) {
+        return res.status(400).json({
+          message: "Category already exists"
+        });
+      }
+
+      const category = await Category.create({
+        name,
+        slug,
+        parent: parent || null
+      });
+
+      return res.json(category);
+
+    }
+
+    /* ======================
+       DELETE CATEGORY
+    ====================== */
+
+    if (req.method === "DELETE") {
+
+      verifyAdmin(req);
+
+      if (!id) {
+        return res.status(400).json({ message: "ID required" });
+      }
+
+      await Category.findByIdAndDelete(id);
+
+      return res.json({
+        message: "Category deleted"
+      });
+
+    }
+
+  } catch (err) {
+
+    return res.status(500).json({
+      message: err.message
+    });
+
+  }
 
 }
