@@ -2,16 +2,23 @@
 width:100%;
 }
 
+.home-container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
 /* HERO */
 
 .hero{
 display:flex;
 justify-content:space-between;
 align-items:center;
+gap:40px;
 padding:80px 10%;
 background:#f5f7fb;
-gap:40px;
 flex-wrap:wrap;
+margin-bottom:60px;
 }
 
 .hero-left{
@@ -59,12 +66,17 @@ border-radius:20px;
 box-shadow:0 10px 30px rgba(0,0,0,0.15);
 }
 
+.hero img{
+width:350px;
+border-radius:15px;
+}
+
 
 /* BOOK SECTION */
 
 .books-section{
 padding:60px 10%;
-background:#f5f7fb; /* samakan dengan hero */
+background:#f5f7fb;
 }
 
 /* hilangkan tulisan Toko Buku */
@@ -72,13 +84,44 @@ background:#f5f7fb; /* samakan dengan hero */
 
 }
 
-
 /* GRID */
 
 .books-grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:30px;
+}
+
+/* CATEGORY SECTION */
+
+.category-section{
+margin-top:60px;
+margin-bottom:60px;
+}
+
+.category-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+/* SCROLL BOOK */
+
+.scroll-books{
+display:flex;
+gap:20px;
+overflow-x:auto;
+padding-bottom:10px;
+scrollbar-width:none;
+}
+
+.scroll-books::-webkit-scrollbar{
+display:none;
+}
+
+.scroll-books .card{
+min-width:200px;
 }
 
 
@@ -101,43 +144,12 @@ width:260px;
 
 }
 
-.category-section{
-
-margin-top:60px;
-
-}
-
-.category-header{
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-
-}
-
-.scroll-books{
-
-display:flex;
-gap:20px;
-overflow-x:auto;
-padding-bottom:10px;
-
-scrollbar-width:none;
-
-}
-
-.scroll-books::-webkit-scrollbar{
-display:none;
-}
-
-.scroll-books .card{
-
-min-width:200px;
-
-}
-
 @media(max-width:768px){
+
+.hero{
+flex-direction:column;
+text-align:center;
+}
 
 .scroll-books .card{
 min-width:150px;

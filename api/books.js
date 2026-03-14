@@ -59,27 +59,30 @@ export default async function handler(req, res) {
 
     await connectDB();
 
-    const { id, category } = req.query;
+    const { id } = req.query;
 
+    // ================= GET =================
     if (req.method === "GET") {
 
+      const { category, subcategory } = req.query;
+
+      let filter = {};
+
       if (category) {
-
-        const books = await Book.find({ category })
-          .sort({ createdAt: -1 })
-          .limit(10);
-
-        return res.status(200).json(books);
-
+        filter.category = category;
       }
 
-      const books = await Book.find({})
+      if (subcategory) {
+        filter.subcategory = subcategory;
+      }
+
+      const books = await Book.find(filter)
         .sort({ createdAt: -1 });
 
       return res.status(200).json(books);
-
     }
 
+    // ================= DELETE =================
     if (req.method === "DELETE") {
 
       verifyAdmin(req);
@@ -100,6 +103,7 @@ export default async function handler(req, res) {
 
     }
 
+    // ================= POST =================
     if (req.method === "POST") {
 
       verifyAdmin(req);
@@ -128,14 +132,12 @@ export default async function handler(req, res) {
           }
 
           const book = await Book.create({
-
             title: fields.title[0],
             price: Number(fields.price[0]),
-            category: fields.category[0],
-
+            category: fields.category ? fields.category[0] : null,
+            subcategory: fields.subcategory ? fields.subcategory[0] : null,
             image,
             public_id,
-
           });
 
           return res.status(200).json(book);
@@ -144,7 +146,9 @@ export default async function handler(req, res) {
 
           console.error(error);
 
-          return res.status(500).json({ error: "Upload failed" });
+          return res.status(500).json({
+            error: "Upload failed",
+          });
 
         }
 
