@@ -8,19 +8,30 @@ body{
 margin:0;
 overflow-x:hidden;
 }
+/* GLOBAL CONTAINER */
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:0 20px;
+}
 
 /* NAVBAR */
 
 .navbar{
 width:100%;
+background:white;
+border-bottom:1px solid #eee;
+}
+
+/* NAV CONTENT */
+
+.nav-container{
 display:flex;
 align-items:center;
 justify-content:space-between;
 
-padding:10px 40px;
-
-background:white;
-border-bottom:1px solid #eee;
+height:60px;
 }
 
 /* LEFT */
@@ -47,34 +58,30 @@ text-decoration:none;
 color:#333;
 }
 
+
 /* SEARCH BAR MODERN */
+
+/* SEARCH */
 
 .nav-search{
 display:flex;
 align-items:center;
 
-background:#f3f4f6;
-border:1px solid #e5e7eb;
+background:#f5f5f5;
 border-radius:8px;
 
-padding:4px 10px;
+padding:6px 12px;
 
 width:260px;
-height:32px;
-
-transition:all .2s ease;
 }
 
-.nav-search:hover{
-background:#ffffff;
-border-color:#d1d5db;
+.nav-search input{
+border:none;
+background:transparent;
+outline:none;
+width:100%;
+font-size:13px;
 }
-
-.nav-search:focus-within{
-border-color:#2563eb;
-box-shadow:0 0 0 2px rgba(37,99,235,0.1);
-}
-
 /* ICON */
 
 .search-icon{
@@ -100,7 +107,7 @@ color:#333;
 color:#9ca3af;
 }
 
-/* RIGHT */
+//* RIGHT */
 
 .nav-right{
 display:flex;
@@ -113,12 +120,6 @@ text-decoration:none;
 color:#333;
 font-size:14px;
 }
-
-.nav-right a:hover{
-color:#2563eb;
-}
-
-/* LOGIN */
 
 .login{
 background:linear-gradient(135deg,#2563eb,#0ea5e9);
