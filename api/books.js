@@ -102,7 +102,66 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: "Deleted" });
 
     }
+// ================= PUT (UPDATE BOOK) =================
+if (req.method === "PUT") {
 
+  verifyAdmin(req);
+
+  const form = new IncomingForm();
+
+  form.parse(req, async (err, fields, files) => {
+
+    try {
+
+      const book = await Book.findById(id);
+
+      if (!book) {
+        return res.status(404).json({ message: "Book not found" });
+      }
+
+      let image = book.image;
+      let public_id = book.public_id;
+
+      if (files.image) {
+
+        if (book.public_id) {
+          await cloudinary.uploader.destroy(book.public_id);
+        }
+
+        const file = files.image[0];
+
+        const upload = await cloudinary.uploader.upload(
+          file.filepath,
+          { folder: "books" }
+        );
+
+        image = upload.secure_url;
+        public_id = upload.public_id;
+      }
+
+      const updated = await Book.findByIdAndUpdate(
+        id,
+        {
+          title: fields.title[0],
+          price: Number(fields.price[0]),
+          category: fields.category?.[0] || null,
+          subcategory: fields.subcategory?.[0] || null,
+          image,
+          public_id,
+        },
+        { new: true }
+      );
+
+      return res.json(updated);
+
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+  });
+
+  return;
+}
     // ================= POST =================
     if (req.method === "POST") {
 

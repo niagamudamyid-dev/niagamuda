@@ -6,6 +6,7 @@ import "../styles/admin-books.css";
 
 export default function AdminBooks() {
   const [books, setBooks] = useState([]);
+  const [editBook, setEditBook] = useState(null);
 
   const adminConfig = {
     headers: {
@@ -24,9 +25,24 @@ export default function AdminBooks() {
   }, []);
 
   const deleteBook = async (id) => {
-    if (!window.confirm("Yakin ingin menghapus buku ini?")) return;
+    if (!confirm("Hapus buku ini?")) return;
 
     await axios.delete(`${API_URL}/api/books?id=${id}`, adminConfig);
+    fetchBooks();
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    await axios.put(
+      `${API_URL}/api/books?id=${editBook._id}`,
+      formData,
+      adminConfig
+    );
+
+    setEditBook(null);
     fetchBooks();
   };
 
@@ -34,30 +50,25 @@ export default function AdminBooks() {
     <AdminLayout>
       <div className="adminBooks-page">
 
-        <div className="adminBooks-header">
-          <h2>📚 Daftar Buku</h2>
-          <span>Total: {books.length}</span>
-        </div>
+        <h2>📚 Daftar Buku</h2>
 
         <div className="adminBooks-container">
 
           {books.map((book) => (
             <div key={book._id} className="adminBooks-card">
 
-              <img src={book.image} alt={book.title} />
+              <img src={book.image} />
 
               <div className="adminBooks-info">
-                <div className="adminBooks-title">{book.title}</div>
-                <div className="adminBooks-price">
-                  Rp {Number(book.price).toLocaleString()}
-                </div>
+                <div>{book.title}</div>
+                <div>Rp {Number(book.price).toLocaleString()}</div>
               </div>
 
               <div className="adminBooks-actions">
-                <button className="edit-btn">Edit</button>
+                <button onClick={() => setEditBook(book)}>Edit</button>
 
                 <button
-                  className="delete-btn"
+                  className="danger"
                   onClick={() => deleteBook(book._id)}
                 >
                   Delete
@@ -68,6 +79,48 @@ export default function AdminBooks() {
           ))}
 
         </div>
+
+        {/* MODAL EDIT */}
+        {editBook && (
+          <div className="adminBooks-modal">
+
+            <div className="adminBooks-modal-content">
+
+              <h3>Edit Buku</h3>
+
+              <form onSubmit={handleUpdate}>
+
+                <input
+                  name="title"
+                  defaultValue={editBook.title}
+                  required
+                />
+
+                <input
+                  name="price"
+                  type="number"
+                  defaultValue={editBook.price}
+                  required
+                />
+
+                <input type="file" name="image" />
+
+                <div className="modal-actions">
+                  <button type="submit">Simpan</button>
+                  <button
+                    type="button"
+                    onClick={() => setEditBook(null)}
+                  >
+                    Batal
+                  </button>
+                </div>
+
+              </form>
+
+            </div>
+
+          </div>
+        )}
 
       </div>
     </AdminLayout>

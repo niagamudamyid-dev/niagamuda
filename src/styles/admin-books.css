@@ -89,7 +89,43 @@
   border-radius: 8px;
   cursor: pointer;
 }
+/* MODAL */
+.adminBooks-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
 
+.adminBooks-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.adminBooks-modal input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 10px;
+}
 /* RESPONSIVE */
 @media (max-width: 1024px) {
   .adminBooks-container {
