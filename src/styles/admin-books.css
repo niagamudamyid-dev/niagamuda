@@ -171,7 +171,41 @@ button:active {
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* ===== TOPBAR ===== */
+.adminBooks-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
 
+.topbar-right {
+  display: flex;
+  gap: 10px;
+}
+
+/* SEARCH */
+.search-input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+  width: 200px;
+}
+
+/* LOGOUT */
+.logout-btn {
+  background: linear-gradient(135deg, #111827, #374151);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+}
 /* RESPONSIVE */
 @media (max-width: 1024px) {
   .adminBooks-container {

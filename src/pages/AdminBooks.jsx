@@ -10,8 +10,12 @@ export default function AdminBooks() {
   const [categories, setCategories] = useState([]);
   const [editBook, setEditBook] = useState(null);
 
+  const [search, setSearch] = useState("");
   const [loadingId, setLoadingId] = useState(null);
   const [toast, setToast] = useState("");
+
+  // 🔥 STATE UNTUK CATEGORY DINAMIS
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const adminConfig = {
     headers: {
@@ -83,21 +87,48 @@ export default function AdminBooks() {
     setLoadingId(null);
   };
 
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    window.location.href = "/login";
+  };
+
   return (
     <AdminLayout>
       <div className="adminBooks-page">
 
-        {/* TOAST */}
         {toast && <div className="admin-toast">{toast}</div>}
 
-        <div className="adminBooks-header">
+        {/* HEADER */}
+        <div className="adminBooks-topbar">
           <h2>📚 Daftar Buku</h2>
-          <span>{books.length} buku</span>
+
+          <div className="topbar-right">
+            <input
+              type="text"
+              placeholder="Cari buku..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="search-input"
+            />
+
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         </div>
 
+        <div className="adminBooks-header">
+          <span>{filteredBooks.length} buku ditemukan</span>
+        </div>
+
+        {/* LIST */}
         <div className="adminBooks-container">
 
-          {books.map((book) => (
+          {filteredBooks.map((book) => (
             <div key={book._id} className="adminBooks-card">
 
               <img src={book.image} />
@@ -112,7 +143,10 @@ export default function AdminBooks() {
               <div className="adminBooks-actions">
                 <button
                   className="btn-edit"
-                  onClick={() => setEditBook(book)}
+                  onClick={() => {
+                    setEditBook(book);
+                    setSelectedCategory(book.category || "");
+                  }}
                 >
                   Edit
                 </button>
@@ -133,7 +167,7 @@ export default function AdminBooks() {
 
         </div>
 
-        {/* MODAL */}
+        {/* MODAL EDIT */}
         {editBook && (
           <div className="adminModal">
 
@@ -156,8 +190,14 @@ export default function AdminBooks() {
                   required
                 />
 
-                <select name="category" defaultValue={editBook.category}>
-                  <option value="">Kategori</option>
+                {/* 🔥 CATEGORY */}
+                <select
+                  name="category"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="">Pilih kategori</option>
+
                   {categories
                     .filter(c => !c.parent)
                     .map(cat => (
@@ -167,10 +207,12 @@ export default function AdminBooks() {
                     ))}
                 </select>
 
+                {/* 🔥 SUBCATEGORY DINAMIS */}
                 <select name="subcategory" defaultValue={editBook.subcategory}>
-                  <option value="">Subkategori</option>
+                  <option value="">Tidak ada</option>
+
                   {categories
-                    .filter(c => c.parent === editBook.category)
+                    .filter(c => c.parent === selectedCategory)
                     .map(cat => (
                       <option key={cat.slug} value={cat.slug}>
                         {cat.name}
