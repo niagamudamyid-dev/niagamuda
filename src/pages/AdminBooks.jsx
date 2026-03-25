@@ -5,7 +5,9 @@ import AdminLayout from "../components/AdminLayout";
 import "../styles/admin-books.css";
 
 export default function AdminBooks() {
+
   const [books, setBooks] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [editBook, setEditBook] = useState(null);
 
   const adminConfig = {
@@ -19,14 +21,19 @@ export default function AdminBooks() {
     setBooks(res.data);
   };
 
+  const fetchCategories = async () => {
+    const res = await axios.get(`${API_URL}/api/categories`);
+    setCategories(res.data);
+  };
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchBooks();
+    fetchCategories();
   }, []);
 
   const deleteBook = async (id) => {
     if (!confirm("Hapus buku ini?")) return;
-
     await axios.delete(`${API_URL}/api/books?id=${id}`, adminConfig);
     fetchBooks();
   };
@@ -35,10 +42,6 @@ export default function AdminBooks() {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-
-    // 🔥 FIX: WAJIB KIRIM CATEGORY
-    formData.append("category", editBook.category || "");
-    formData.append("subcategory", editBook.subcategory || "");
 
     await axios.put(
       `${API_URL}/api/books?id=${editBook._id}`,
@@ -94,7 +97,7 @@ export default function AdminBooks() {
 
         </div>
 
-        {/* MODAL */}
+        {/* ===== MODAL EDIT ===== */}
         {editBook && (
           <div className="adminModal">
 
@@ -107,7 +110,6 @@ export default function AdminBooks() {
                 <input
                   name="title"
                   defaultValue={editBook.title}
-                  placeholder="Judul"
                   required
                 />
 
@@ -115,14 +117,42 @@ export default function AdminBooks() {
                   name="price"
                   type="number"
                   defaultValue={editBook.price}
-                  placeholder="Harga"
                   required
                 />
 
-                <input
-                  type="file"
-                  name="image"
-                />
+                {/* CATEGORY */}
+                <select
+                  name="category"
+                  defaultValue={editBook.category || ""}
+                >
+                  <option value="">Pilih kategori</option>
+
+                  {categories
+                    .filter(c => !c.parent)
+                    .map(cat => (
+                      <option key={cat.slug} value={cat.slug}>
+                        {cat.name}
+                      </option>
+                    ))}
+                </select>
+
+                {/* SUBCATEGORY */}
+                <select
+                  name="subcategory"
+                  defaultValue={editBook.subcategory || ""}
+                >
+                  <option value="">Tidak ada</option>
+
+                  {categories
+                    .filter(c => c.parent === editBook.category)
+                    .map(cat => (
+                      <option key={cat.slug} value={cat.slug}>
+                        {cat.name}
+                      </option>
+                    ))}
+                </select>
+
+                <input type="file" name="image" />
 
                 <img
                   src={editBook.image}
@@ -131,7 +161,6 @@ export default function AdminBooks() {
 
                 <div className="modal-actions">
                   <button className="btn-primary">Simpan</button>
-
                   <button
                     type="button"
                     className="btn-cancel"
