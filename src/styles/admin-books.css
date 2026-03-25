@@ -132,6 +132,46 @@
   border-radius: 8px;
 }
 
+/* TOAST */
+.admin-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #16a34a;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease;
+  z-index: 9999;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* CLICK EFFECT */
+button {
+  transition: 0.15s;
+}
+
+button:active {
+  transform: scale(0.92);
+}
+
+/* LOADING BUTTON */
+.btn-loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
   .adminBooks-container {
