@@ -1,25 +1,16 @@
-/* =========================
-   ADMIN BOOKS (ISOLATED)
-========================= */
-
+/* ===== PAGE ===== */
 .adminBooks-page {
   padding: 20px;
-  width: 100%;
 }
 
 /* HEADER */
 .adminBooks-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 20px;
 }
 
-.adminBooks-header h2 {
-  margin: 0;
-}
-
-/* CONTAINER */
+/* GRID */
 .adminBooks-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -28,14 +19,14 @@
 
 /* CARD */
 .adminBooks-card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 14px;
   padding: 14px;
   display: flex;
-  gap: 14px;
+  gap: 12px;
   align-items: center;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
-  transition: 0.25s;
+  transition: 0.2s;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
 }
 
 .adminBooks-card:hover {
@@ -51,16 +42,11 @@
 }
 
 /* INFO */
-.adminBooks-info {
-  flex: 1;
-}
-
-.adminBooks-title {
+.adminBooks-info .title {
   font-weight: 600;
-  margin-bottom: 6px;
 }
 
-.adminBooks-price {
+.adminBooks-info .price {
   color: #2563eb;
   font-weight: bold;
 }
@@ -69,11 +55,12 @@
 .adminBooks-actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.edit-btn {
-  background: #3b82f6;
+/* BUTTON */
+.btn-edit {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   border: none;
   padding: 6px 10px;
@@ -81,16 +68,17 @@
   cursor: pointer;
 }
 
-.delete-btn {
-  background: #ef4444;
+.btn-delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   color: white;
   border: none;
   padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
 }
-/* MODAL */
-.adminBooks-modal {
+
+/* ===== MODAL ===== */
+.adminModal {
   position: fixed;
   top: 0;
   left: 0;
@@ -100,10 +88,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
 }
 
-.adminBooks-modal-content {
+.adminModal-box {
   background: white;
   padding: 20px;
   border-radius: 12px;
@@ -111,21 +98,40 @@
   max-width: 400px;
 }
 
-.adminBooks-modal input {
+.adminForm input {
   width: 100%;
   margin-bottom: 10px;
   padding: 10px;
 }
 
+.preview-img {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+/* ACTION MODAL */
 .modal-actions {
   display: flex;
   gap: 10px;
 }
 
-.modal-actions button {
+.btn-primary {
   flex: 1;
+  background: #2563eb;
+  color: white;
+  border: none;
   padding: 10px;
+  border-radius: 8px;
 }
+
+.btn-cancel {
+  flex: 1;
+  background: #ccc;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
   .adminBooks-container {
@@ -136,9 +142,5 @@
 @media (max-width: 640px) {
   .adminBooks-container {
     grid-template-columns: 1fr;
-  }
-
-  .adminBooks-card {
-    flex-direction: row;
   }
 }

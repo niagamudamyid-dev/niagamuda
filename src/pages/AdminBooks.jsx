@@ -36,6 +36,10 @@ export default function AdminBooks() {
 
     const formData = new FormData(e.target);
 
+    // 🔥 FIX: WAJIB KIRIM CATEGORY
+    formData.append("category", editBook.category || "");
+    formData.append("subcategory", editBook.subcategory || "");
+
     await axios.put(
       `${API_URL}/api/books?id=${editBook._id}`,
       formData,
@@ -50,7 +54,10 @@ export default function AdminBooks() {
     <AdminLayout>
       <div className="adminBooks-page">
 
-        <h2>📚 Daftar Buku</h2>
+        <div className="adminBooks-header">
+          <h2>📚 Daftar Buku</h2>
+          <span>{books.length} buku</span>
+        </div>
 
         <div className="adminBooks-container">
 
@@ -60,15 +67,22 @@ export default function AdminBooks() {
               <img src={book.image} />
 
               <div className="adminBooks-info">
-                <div>{book.title}</div>
-                <div>Rp {Number(book.price).toLocaleString()}</div>
+                <div className="title">{book.title}</div>
+                <div className="price">
+                  Rp {Number(book.price).toLocaleString()}
+                </div>
               </div>
 
               <div className="adminBooks-actions">
-                <button onClick={() => setEditBook(book)}>Edit</button>
+                <button
+                  className="btn-edit"
+                  onClick={() => setEditBook(book)}
+                >
+                  Edit
+                </button>
 
                 <button
-                  className="danger"
+                  className="btn-delete"
                   onClick={() => deleteBook(book._id)}
                 >
                   Delete
@@ -80,19 +94,20 @@ export default function AdminBooks() {
 
         </div>
 
-        {/* MODAL EDIT */}
+        {/* MODAL */}
         {editBook && (
-          <div className="adminBooks-modal">
+          <div className="adminModal">
 
-            <div className="adminBooks-modal-content">
+            <div className="adminModal-box">
 
               <h3>Edit Buku</h3>
 
-              <form onSubmit={handleUpdate}>
+              <form onSubmit={handleUpdate} className="adminForm">
 
                 <input
                   name="title"
                   defaultValue={editBook.title}
+                  placeholder="Judul"
                   required
                 />
 
@@ -100,15 +115,26 @@ export default function AdminBooks() {
                   name="price"
                   type="number"
                   defaultValue={editBook.price}
+                  placeholder="Harga"
                   required
                 />
 
-                <input type="file" name="image" />
+                <input
+                  type="file"
+                  name="image"
+                />
+
+                <img
+                  src={editBook.image}
+                  className="preview-img"
+                />
 
                 <div className="modal-actions">
-                  <button type="submit">Simpan</button>
+                  <button className="btn-primary">Simpan</button>
+
                   <button
                     type="button"
+                    className="btn-cancel"
                     onClick={() => setEditBook(null)}
                   >
                     Batal
