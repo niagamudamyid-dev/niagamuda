@@ -1,39 +1,59 @@
-import {useParams} from "react-router-dom"
-import {useEffect,useState} from "react"
-import axios from "axios"
-import {API_URL} from "../config"
-import BookCard from "../components/BookCard"
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { API_URL } from "../config";
+import BookCard from "../components/BookCard";
+import "../styles/category.css"; // ⬅️ CSS KHUSUS
 
-export default function Category(){
+export default function Category() {
+  const { name } = useParams();
 
-const {name}=useParams()
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const [books,setBooks]=useState([])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
 
-useEffect(()=>{
+    axios
+      .get(`${API_URL}/api/books?category=${name}`)
+      .then((res) => setBooks(res.data))
+      .catch(() => setBooks([]))
+      .finally(() => setLoading(false));
+  }, [name]);
 
-axios
-.get(`${API_URL}/api/books?category=${name}`)
-.then(res=>setBooks(res.data))
+  return (
+    <div className="category-page">
 
-},[name])
+      {/* HEADER */}
+      <div className="category-header">
+        <h1>{name}</h1>
+        <p>Kumpulan buku dalam kategori {name}</p>
+      </div>
 
-return(
+      {/* CONTENT */}
+      <div className="category-content">
 
-<div className="container">
+        {loading ? (
+          <div className="category-loading">
+            Loading data...
+          </div>
+        ) : books.length === 0 ? (
+          <div className="category-empty">
+            Tidak ada buku di kategori ini
+          </div>
+        ) : (
+          <div className="category-grid">
+            {books.map((book) => (
+              <div className="category-item" key={book._id}>
+                <BookCard book={book} />
+              </div>
+            ))}
+          </div>
+        )}
 
-<h1>{name}</h1>
+      </div>
 
-<div className="books-grid">
-
-{books.map(book=>(
-<BookCard key={book._id} book={book}/>
-))}
-
-</div>
-
-</div>
-
-)
-
+    </div>
+  );
 }
