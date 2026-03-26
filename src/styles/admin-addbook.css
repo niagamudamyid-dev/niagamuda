@@ -1,76 +1,58 @@
-/* PAGE */
 .adminAddBook-page {
-  display: flex;
-  justify-content: center;
-  padding: 30px 20px;
+  padding: 30px;
 }
 
-/* CARD */
-.adminAddBook-card {
-  width: 100%;
-  max-width: 420px;
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-/* TITLE */
-.adminAddBook-title {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-/* FORM */
+/* GRID FORM (2 kolom desktop) */
 .adminAddBook-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* FULL WIDTH ITEM */
+.adminAddBook-form textarea,
+.adminAddBook-form button {
+  grid-column: span 2;
 }
 
 .adminAddBook-form input,
-.adminAddBook-form select {
-  padding: 10px;
-  border-radius: 8px;
+.adminAddBook-form select,
+.adminAddBook-form textarea {
+  padding: 12px;
+  border-radius: 10px;
   border: 1px solid #ddd;
 }
 
-/* INLINE INPUT + BUTTON */
-.adminAddBook-inline {
-  display: flex;
-  gap: 8px;
-}
-
-.adminAddBook-inline input {
-  flex: 1;
+/* TEXTAREA */
+.adminAddBook-form textarea {
+  min-height: 120px;
+  resize: none;
 }
 
 /* BUTTON */
-.adminAddBook-btn {
-  margin-top: 10px;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
+.adminAddBook-form button {
   background: linear-gradient(135deg,#2563eb,#1d4ed8);
   color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
   font-weight: bold;
   cursor: pointer;
 }
 
-.adminAddBook-btn:active {
-  transform: scale(0.95);
+.adminAddBook-form button:active {
+  transform: scale(0.96);
 }
 
 /* PREVIEW */
 .adminAddBook-preview {
-  width: 100px;
+  width: 120px;
   border-radius: 10px;
-  margin-top: 10px;
 }
 
 /* RESPONSIVE */
-@media (max-width: 480px) {
-  .adminAddBook-card {
-    padding: 18px;
+@media(max-width:768px){
+  .adminAddBook-form{
+    grid-template-columns:1fr;
   }
 }

@@ -11,36 +11,42 @@ const [book,setBook]=useState(null)
 useEffect(()=>{
 axios.get(`${API_URL}/api/books`)
 .then(res=>{
-const found=res.data.find(b=>b._id===id)
-setBook(found)
+setBook(res.data.find(b=>b._id===id))
 })
 },[id])
 
 if(!book) return <p>Loading...</p>
 
 return(
-<div className="book-detail">
+<div style={{padding:30}}>
 
-<img src={book.image}/>
+<img src={book.image} style={{width:200}}/>
 
 <h1>{book.title}</h1>
+
 <p>{book.description}</p>
 
-<ul>
-<li>Penulis: {book.author}</li>
-<li>ISBN: {book.isbn}</li>
-<li>Penerbit: {book.publisher}</li>
-<li>Tanggal: {book.publishDate}</li>
-<li>Halaman: {book.pages}</li>
-<li>Berat: {book.weight}</li>
-<li>Cover: {book.coverType}</li>
-<li>Dimensi: {book.dimension}</li>
-<li>Bahasa: {book.language}</li>
-<li>Stok: {book.stock}</li>
-</ul>
+<hr/>
+
+<p><b>Penulis:</b> {book.author}</p>
+<p><b>ISBN:</b> {book.isbn}</p>
+<p><b>Penerbit:</b> {book.publisher}</p>
+<p><b>Halaman:</b> {book.pages}</p>
+<p><b>Bahasa:</b> {book.language}</p>
+<p><b>Stok:</b> {book.stock}</p>
+
+<br/>
 
 <a href={book.shopeeLink} target="_blank">
-<button>Beli di Shopee</button>
+<button style={{
+padding:12,
+background:"#ee4d2d",
+color:"white",
+border:"none",
+borderRadius:8
+}}>
+Beli di Shopee
+</button>
 </a>
 
 </div>

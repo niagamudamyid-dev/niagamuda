@@ -1,66 +1,85 @@
-import { useState } from "react"
+import { useEffect,useState } from "react"
 import axios from "axios"
 import { API_URL } from "../config"
 import AdminLayout from "../components/AdminLayout"
 
 export default function AdminCategory(){
 
-const [name,setName] = useState("")
-const [parent,setParent] = useState("")
+const [categories,setCategories]=useState([])
+const [name,setName]=useState("")
+const [parent,setParent]=useState("")
 
-const submit = async(e)=>{
+const adminConfig={
+headers:{
+Authorization:`Bearer ${localStorage.getItem("adminToken")}`
+}
+}
 
-e.preventDefault()
+const load=()=>{
+axios.get(`${API_URL}/api/categories`)
+.then(res=>setCategories(res.data))
+}
 
+useEffect(()=>{load()},[])
+
+const create=async()=>{
 await axios.post(`${API_URL}/api/categories`,{
 name,
 parent
-})
-
-alert("Kategori ditambahkan")
+},adminConfig)
 
 setName("")
 setParent("")
+load()
+}
 
+const del=async(id)=>{
+if(!confirm("Hapus kategori?")) return
+
+await axios.delete(`${API_URL}/api/categories?id=${id}`,adminConfig)
+load()
 }
 
 return(
-
 <AdminLayout>
 
-<div className="card">
+<div style={{padding:20}}>
 
-<h2>Tambah Kategori</h2>
-
-<form onSubmit={submit}>
+<h2>Kelola Kategori</h2>
 
 <input
 placeholder="Nama kategori"
 value={name}
-onChange={(e)=>setName(e.target.value)}
-required
+onChange={e=>setName(e.target.value)}
 />
 
-<select
-value={parent}
-onChange={(e)=>setParent(e.target.value)}
->
-
-<option value="">Kategori Utama</option>
-
-
+<select onChange={e=>setParent(e.target.value)}>
+<option value="">Kategori utama</option>
+{categories.filter(c=>!c.parent).map(cat=>(
+<option key={cat.slug} value={cat.slug}>
+{cat.name}
+</option>
+))}
 </select>
 
-<button className="primary">
-Tambah
+<button onClick={create}>Tambah</button>
+
+<hr/>
+
+{categories.map(cat=>(
+<div key={cat._id} style={{marginBottom:10}}>
+
+{cat.name}
+
+<button onClick={()=>del(cat._id)}>
+Delete
 </button>
 
-</form>
+</div>
+))}
 
 </div>
 
 </AdminLayout>
-
 )
-
 }

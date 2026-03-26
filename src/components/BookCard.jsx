@@ -1,8 +1,16 @@
+import { useNavigate } from "react-router-dom";
+
 export default function BookCard({ book }) {
+
+const navigate = useNavigate();
+
+const handleClick = () => {
+  navigate(`/book/${book._id}`);
+};
 
 return (
 
-<div className="card">
+<div className="card" onClick={handleClick} style={{cursor:"pointer"}}>
 
 <div className="card-cover">
 
