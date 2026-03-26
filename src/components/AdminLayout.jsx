@@ -13,7 +13,7 @@ return(
 
 <h2>Niagamuda</h2>
 
-<button onClick={()=>navigate("/admin")}>
+<button onClick={()=>navigate("/cms-portal-2026")}>
 Dashboard
 </button>
 
@@ -25,9 +25,9 @@ Daftar Buku
 Tambah Buku
 </button>
 
-<button onClick={()=>navigate("/admin/category")}>
+{/* <button onClick={()=>navigate("/admin/category")}>
 Kategori
-</button>
+</button> */}
 
 </aside>
 
