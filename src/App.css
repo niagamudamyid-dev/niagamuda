@@ -115,6 +115,23 @@ background:#f3f4f6;
 color:#2563eb;
 }
 
+/* RESET LINK NAV */
+.nav-right a,
+.nav-left a {
+  color: #333 !important;
+  text-decoration: none;
+}
+
+/* HILANGKAN WARNA BIRU DEFAULT */
+.nav-right a:visited,
+.nav-left a:visited {
+  color: #333 !important;
+}
+
+/* HOVER */
+.nav-right a:hover {
+  color: #2563eb !important;
+}
 /* RESPONSIVE */
 
 @media(max-width:900px){
