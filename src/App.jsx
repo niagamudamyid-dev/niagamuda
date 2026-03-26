@@ -18,6 +18,7 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API_URL } from "./config";
+import Tentang from "./pages/Tentang";
 
 
 function Layout(){
@@ -150,6 +151,7 @@ onKeyDown={handleSearch}
 <Route path="/login" element={<Login />} />
 <Route path="/kategori/:name" element={<Category />} />
 <Route path="/book/:id" element={<BookDetail />} />
+<Route path="/tentang" element={<Tentang/>} />
 {/* ADMIN */}
 
 <Route
