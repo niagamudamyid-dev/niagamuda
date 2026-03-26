@@ -1,40 +1,42 @@
 /* PAGE */
-.about-page{
+.aboutX-page{
 background:#f5f7fb;
-padding-bottom:40px;
+padding-bottom:50px;
+font-family:system-ui;
 }
 
 /* HERO */
-.about-hero{
+.aboutX-hero{
 text-align:center;
-padding:60px 20px;
+padding:80px 20px;
 background:linear-gradient(135deg,#2563eb,#0ea5e9);
 color:white;
 }
 
-.about-hero h1{
-font-size:40px;
+.aboutX-hero h1{
+font-size:42px;
 margin-bottom:10px;
 }
 
-.about-hero p{
+.aboutX-hero p{
 max-width:600px;
 margin:auto;
 opacity:.9;
 }
 
 /* SECTION */
-.about-section{
+.aboutX-section{
 max-width:900px;
-margin:40px auto;
+margin:50px auto;
 background:white;
-padding:30px;
-border-radius:16px;
+padding:35px;
+border-radius:18px;
 line-height:1.7;
+box-shadow:0 10px 30px rgba(0,0,0,0.05);
 }
 
 /* FEATURES */
-.about-features{
+.aboutX-features{
 max-width:1100px;
 margin:auto;
 display:grid;
@@ -43,45 +45,82 @@ gap:20px;
 padding:20px;
 }
 
-.feature{
+.aboutX-feature{
 background:white;
-padding:20px;
-border-radius:14px;
+padding:25px;
+border-radius:16px;
 text-align:center;
-transition:0.2s;
+transition:0.3s;
+box-shadow:0 8px 25px rgba(0,0,0,0.05);
 }
 
-.feature:hover{
-transform:translateY(-5px);
-box-shadow:0 10px 25px rgba(0,0,0,0.1);
+.aboutX-feature:hover{
+transform:translateY(-8px);
+}
+
+/* TEAM */
+.aboutX-team{
+margin-top:60px;
+text-align:center;
+}
+
+.aboutX-team h2{
+margin-bottom:20px;
+}
+
+.aboutX-team-grid{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+}
+
+.aboutX-member{
+background:white;
+padding:20px;
+border-radius:16px;
+width:200px;
+box-shadow:0 8px 25px rgba(0,0,0,0.05);
+transition:0.3s;
+}
+
+.aboutX-member:hover{
+transform:translateY(-6px);
+}
+
+.aboutX-member img{
+width:100px;
+height:100px;
+border-radius:50%;
+margin-bottom:10px;
 }
 
 /* CTA */
-.about-cta{
+.aboutX-cta{
 text-align:center;
-margin-top:40px;
+margin-top:60px;
 }
 
-.cta-btn{
+.aboutX-btn{
 display:inline-block;
 margin-top:15px;
-padding:12px 20px;
+padding:14px 25px;
 background:#2563eb;
 color:white;
-border-radius:10px;
+border-radius:12px;
 text-decoration:none;
 font-weight:bold;
 transition:0.2s;
 }
 
-.cta-btn:hover{
+.aboutX-btn:hover{
 transform:scale(1.05);
 }
 
 /* RESPONSIVE */
 @media(max-width:900px){
 
-.about-features{
+.aboutX-features{
 grid-template-columns:1fr 1fr;
 }
 
@@ -89,12 +128,16 @@ grid-template-columns:1fr 1fr;
 
 @media(max-width:500px){
 
-.about-features{
+.aboutX-features{
 grid-template-columns:1fr;
 }
 
-.about-hero h1{
+.aboutX-hero h1{
 font-size:28px;
+}
+
+.aboutX-section{
+margin:20px;
 }
 
 }
