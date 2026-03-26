@@ -22,7 +22,6 @@ if (!cached) {
 }
 
 async function connectDB() {
-
   if (cached.conn) return cached.conn;
 
   cached.conn = await mongoose.connect(MONGO_URI, {
@@ -33,15 +32,11 @@ async function connectDB() {
 }
 
 function verifyAdmin(req) {
-
   const auth = req.headers.authorization;
 
-  if (!auth) {
-    throw new Error("Unauthorized");
-  }
+  if (!auth) throw new Error("Unauthorized");
 
   const token = auth.split(" ")[1];
-
   jwt.verify(token, process.env.JWT_SECRET);
 }
 
@@ -56,28 +51,25 @@ export default async function handler(req, res) {
   }
 
   try {
-
     await connectDB();
 
-    const { id } = req.query;
+    const { id, category, subcategory } = req.query;
 
     // ================= GET =================
     if (req.method === "GET") {
 
-      const { category, subcategory } = req.query;
+      // 🔥 GET BY ID (FIX DETAIL PAGE)
+      if (id) {
+        const book = await Book.findById(id);
+        return res.json(book);
+      }
 
       let filter = {};
 
-      if (category) {
-        filter.category = category;
-      }
+      if (category) filter.category = category;
+      if (subcategory) filter.subcategory = subcategory;
 
-      if (subcategory) {
-        filter.subcategory = subcategory;
-      }
-
-      const books = await Book.find(filter)
-        .sort({ createdAt: -1 });
+      const books = await Book.find(filter).sort({ createdAt: -1 });
 
       return res.status(200).json(books);
     }
@@ -100,82 +92,85 @@ export default async function handler(req, res) {
       await Book.findByIdAndDelete(id);
 
       return res.status(200).json({ message: "Deleted" });
-
     }
-// ================= PUT (UPDATE BOOK) =================
-if (req.method === "PUT") {
 
-  verifyAdmin(req);
+    // ================= PUT (UPDATE) =================
+    if (req.method === "PUT") {
 
-  const form = new IncomingForm();
+      verifyAdmin(req);
 
-  form.parse(req, async (err, fields, files) => {
+      const form = new IncomingForm();
 
-    try {
+      form.parse(req, async (err, fields, files) => {
 
-      const book = await Book.findById(id);
+        try {
 
-      if (!book) {
-        return res.status(404).json({ message: "Book not found" });
-      }
+          const book = await Book.findById(id);
 
-      let image = book.image;
-      let public_id = book.public_id;
+          if (!book) {
+            return res.status(404).json({ message: "Book not found" });
+          }
 
-      if (files.image) {
+          let image = book.image;
+          let public_id = book.public_id;
 
-        if (book.public_id) {
-          await cloudinary.uploader.destroy(book.public_id);
+          if (files.image && files.image[0]) {
+
+            if (book.public_id) {
+              await cloudinary.uploader.destroy(book.public_id);
+            }
+
+            const file = files.image[0];
+
+            const upload = await cloudinary.uploader.upload(
+              file.filepath,
+              { folder: "books" }
+            );
+
+            image = upload.secure_url;
+            public_id = upload.public_id;
+          }
+
+          const updated = await Book.findByIdAndUpdate(
+            id,
+            {
+              title: fields.title?.[0] || "",
+              price: Number(fields.price?.[0] || 0),
+              category: fields.category?.[0] || "",
+              subcategory: fields.subcategory?.[0] || "",
+
+              description: fields.description?.[0] || "",
+              author: fields.author?.[0] || "",
+              isbn: fields.isbn?.[0] || "",
+              publisher: fields.publisher?.[0] || "",
+              publishDate: fields.publishDate?.[0] || "",
+              pages: fields.pages?.[0] || "",
+              weight: fields.weight?.[0] || "",
+              coverType: fields.coverType?.[0] || "",
+              dimension: fields.dimension?.[0] || "",
+              bonus: fields.bonus?.[0] || "",
+              language: fields.language?.[0] || "",
+              stock: Number(fields.stock?.[0] || 0),
+              shopeeLink: fields.shopeeLink?.[0] || "",
+
+              image,
+              public_id
+            },
+            { new: true }
+          );
+
+          return res.json(updated);
+
+        } catch (error) {
+          console.error("UPDATE ERROR:", error);
+          return res.status(500).json({ error: error.message });
         }
 
-        const file = files.image[0];
+      });
 
-        const upload = await cloudinary.uploader.upload(
-          file.filepath,
-          { folder: "books" }
-        );
-
-        image = upload.secure_url;
-        public_id = upload.public_id;
-      }
-
-      const updated = await Book.findByIdAndUpdate(
-        id,
-        {
-          title: fields.title[0],
-          price: Number(fields.price[0]),
-          category: fields.category?.[0] || null,
-          subcategory: fields.subcategory?.[0] || null,
-          image,
-          public_id,
-
-          description: fields.description?.[0],
-  author: fields.author?.[0],
-  isbn: fields.isbn?.[0],
-  publisher: fields.publisher?.[0],
-  publishDate: fields.publishDate?.[0],
-  pages: fields.pages?.[0],
-  weight: fields.weight?.[0],
-  coverType: fields.coverType?.[0],
-  dimension: fields.dimension?.[0],
-  bonus: fields.bonus?.[0],
-  language: fields.language?.[0],
-  stock: Number(fields.stock?.[0]),
-  shopeeLink: fields.shopeeLink?.[0],
-        },
-        { new: true }
-      );
-
-      return res.json(updated);
-
-    } catch (error) {
-      return res.status(500).json({ error: error.message });
+      return;
     }
 
-  });
-
-  return;
-}
     // ================= POST =================
     if (req.method === "POST") {
 
@@ -190,7 +185,7 @@ if (req.method === "PUT") {
           let image = null;
           let public_id = null;
 
-          if (files.image) {
+          if (files.image && files.image[0]) {
 
             const file = files.image[0];
 
@@ -201,48 +196,44 @@ if (req.method === "PUT") {
 
             image = upload.secure_url;
             public_id = upload.public_id;
-
           }
 
           const book = await Book.create({
-            title: fields.title[0],
-            price: Number(fields.price[0]),
-            category: fields.category ? fields.category[0] : null,
-            subcategory: fields.subcategory ? fields.subcategory[0] : null,
-            image,
-            public_id,
+            title: fields.title?.[0] || "",
+            price: Number(fields.price?.[0] || 0),
+            category: fields.category?.[0] || "",
+            subcategory: fields.subcategory?.[0] || "",
 
-            description: fields.description?.[0],
-  author: fields.author?.[0],
-  isbn: fields.isbn?.[0],
-  publisher: fields.publisher?.[0],
-  publishDate: fields.publishDate?.[0],
-  pages: fields.pages?.[0],
-  weight: fields.weight?.[0],
-  coverType: fields.coverType?.[0],
-  dimension: fields.dimension?.[0],
-  bonus: fields.bonus?.[0],
-  language: fields.language?.[0],
-  stock: Number(fields.stock?.[0]),
-  shopeeLink: fields.shopeeLink?.[0],
+            description: fields.description?.[0] || "",
+            author: fields.author?.[0] || "",
+            isbn: fields.isbn?.[0] || "",
+            publisher: fields.publisher?.[0] || "",
+            publishDate: fields.publishDate?.[0] || "",
+            pages: fields.pages?.[0] || "",
+            weight: fields.weight?.[0] || "",
+            coverType: fields.coverType?.[0] || "",
+            dimension: fields.dimension?.[0] || "",
+            bonus: fields.bonus?.[0] || "",
+            language: fields.language?.[0] || "",
+            stock: Number(fields.stock?.[0] || 0),
+            shopeeLink: fields.shopeeLink?.[0] || "",
+
+            image,
+            public_id
           });
 
           return res.status(200).json(book);
 
         } catch (error) {
-
-          console.error(error);
-
+          console.error("POST ERROR:", error);
           return res.status(500).json({
-            error: "Upload failed",
+            error: error.message
           });
-
         }
 
       });
 
       return;
-
     }
 
     res.status(405).json({ message: "Method not allowed" });
@@ -256,5 +247,4 @@ if (req.method === "PUT") {
     });
 
   }
-
 }
