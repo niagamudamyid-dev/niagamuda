@@ -77,60 +77,130 @@
   cursor: pointer;
 }
 
-/* ===== MODAL ===== */
+/* ===== MODAL OVERLAY ===== */
 .adminModal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+
+  overflow-y: auto; /* 🔥 penting */
+  padding: 40px 10px;
+
+  z-index: 9999;
 }
 
+/* ===== MODAL BOX ===== */
 .adminModal-box {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
+  background: #ffffff;
   width: 100%;
-  max-width: 400px;
+  max-width: 800px; /* 🔥 lebih lebar */
+  border-radius: 16px;
+
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+
+  animation: modalFade 0.25s ease;
 }
 
-.adminForm input {
-  width: 100%;
-  margin-bottom: 10px;
+/* ANIMATION */
+@keyframes modalFade {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ===== FORM ===== */
+.adminForm {
+  max-height: 70vh;
+  overflow-y: auto; /* 🔥 SCROLL DALAM */
+  padding-right: 6px;
+}
+
+/* SCROLL CUSTOM */
+.adminForm::-webkit-scrollbar {
+  width: 6px;
+}
+.adminForm::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+/* ===== GRID ===== */
+.adminForm-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ===== INPUT ===== */
+.adminForm input,
+.adminForm select {
   padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
 }
 
+/* ===== TEXTAREA ===== */
+.adminForm-textarea {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  min-height: 120px;
+  border-radius: 10px;
+}
+
+/* ===== IMAGE ===== */
 .preview-img {
-  width: 80px;
-  margin-bottom: 10px;
+  width: 100px;
+  margin-top: 10px;
+  border-radius: 10px;
 }
 
-/* ACTION MODAL */
+/* ===== STICKY BUTTON AREA ===== */
 .modal-actions {
+  position: sticky;
+  bottom: 0;
+  background: white;
+
   display: flex;
   gap: 10px;
+  padding-top: 10px;
+  margin-top: 15px;
 }
 
+/* BUTTON */
 .btn-primary {
   flex: 1;
-  background: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
   color: white;
   border: none;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
 }
 
 .btn-cancel {
   flex: 1;
-  background: #ccc;
+  background: #e5e7eb;
   border: none;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
 }
+
 
 /* TOAST */
 .admin-toast {
@@ -226,7 +296,13 @@ button:active {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .adminForm-grid {
+    grid-template-columns: 1fr;}
+    .adminForm-grid {
     grid-template-columns: 1fr;
+  }
+
+  .adminModal-box {
+    max-width: 95%;
   }
 }
 /* RESPONSIVE */

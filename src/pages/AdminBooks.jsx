@@ -14,7 +14,6 @@ export default function AdminBooks() {
   const [loadingId, setLoadingId] = useState(null);
   const [toast, setToast] = useState("");
 
-  // 🔥 STATE UNTUK CATEGORY DINAMIS
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const adminConfig = {
@@ -43,6 +42,31 @@ export default function AdminBooks() {
     fetchBooks();
     fetchCategories();
   }, []);
+
+  /* =========================
+     🔥 FITUR 1: AUTO SCROLL
+  ========================= */
+  useEffect(() => {
+    if (editBook) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [editBook]);
+
+  /* =========================
+     🔥 FITUR 2: LOCK SCROLL
+  ========================= */
+  useEffect(() => {
+    if (editBook) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    // 🔥 cleanup biar aman
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [editBook]);
 
   const deleteBook = async (id) => {
     if (loadingId) return;
@@ -167,113 +191,105 @@ export default function AdminBooks() {
 
         </div>
 
-        {/* MODAL EDIT */}
+        {/* MODAL */}
         {editBook && (
-  <div className="adminModal">
-    <div className="adminModal-box">
+          <div className="adminModal" onClick={() => setEditBook(null)}>
+            <div className="adminModal-box" onClick={(e)=>e.stopPropagation()}>
 
-      <h3>Edit Buku Lengkap</h3>
+              <h3>Edit Buku Lengkap</h3>
 
-      <form onSubmit={handleUpdate} className="adminForm">
+              <form onSubmit={handleUpdate} className="adminForm">
 
-        {/* ===== GRID FORM ===== */}
-        <div className="adminForm-grid">
+                <div className="adminForm-grid">
 
-          <input name="title" defaultValue={editBook.title} placeholder="Judul" />
-          <input name="author" defaultValue={editBook.author} placeholder="Penulis" />
+                  <input name="title" defaultValue={editBook.title} placeholder="Judul" />
+                  <input name="author" defaultValue={editBook.author} placeholder="Penulis" />
 
-          <input name="isbn" defaultValue={editBook.isbn} placeholder="ISBN" />
-          <input name="publisher" defaultValue={editBook.publisher} placeholder="Penerbit" />
+                  <input name="isbn" defaultValue={editBook.isbn} placeholder="ISBN" />
+                  <input name="publisher" defaultValue={editBook.publisher} placeholder="Penerbit" />
 
-          <input name="publishDate" defaultValue={editBook.publishDate} placeholder="Tanggal Terbit" />
-          <input name="pages" defaultValue={editBook.pages} placeholder="Jumlah Halaman" />
+                  <input name="publishDate" defaultValue={editBook.publishDate} placeholder="Tanggal Terbit" />
+                  <input name="pages" defaultValue={editBook.pages} placeholder="Jumlah Halaman" />
 
-          <input name="weight" defaultValue={editBook.weight} placeholder="Berat" />
-          <input name="coverType" defaultValue={editBook.coverType} placeholder="Jenis Cover" />
+                  <input name="weight" defaultValue={editBook.weight} placeholder="Berat" />
+                  <input name="coverType" defaultValue={editBook.coverType} placeholder="Jenis Cover" />
 
-          <input name="dimension" defaultValue={editBook.dimension} placeholder="Dimensi" />
-          <input name="bonus" defaultValue={editBook.bonus} placeholder="Bonus" />
+                  <input name="dimension" defaultValue={editBook.dimension} placeholder="Dimensi" />
+                  <input name="bonus" defaultValue={editBook.bonus} placeholder="Bonus" />
 
-          <input name="language" defaultValue={editBook.language} placeholder="Bahasa" />
-          <input name="stock" type="number" defaultValue={editBook.stock} placeholder="Stok" />
+                  <input name="language" defaultValue={editBook.language} placeholder="Bahasa" />
+                  <input name="stock" type="number" defaultValue={editBook.stock} placeholder="Stok" />
 
-          <input name="price" type="number" defaultValue={editBook.price} placeholder="Harga" />
-          <input name="shopeeLink" defaultValue={editBook.shopeeLink} placeholder="Link Shopee" />
+                  <input name="price" type="number" defaultValue={editBook.price} placeholder="Harga" />
+                  <input name="shopeeLink" defaultValue={editBook.shopeeLink} placeholder="Link Shopee" />
 
-        </div>
+                </div>
 
-        {/* ===== DESKRIPSI ===== */}
-        <textarea
-          name="description"
-          defaultValue={editBook.description}
-          placeholder="Deskripsi"
-          className="adminForm-textarea"
-        />
+                <textarea
+                  name="description"
+                  defaultValue={editBook.description}
+                  placeholder="Deskripsi"
+                  className="adminForm-textarea"
+                />
 
-        {/* ===== CATEGORY ===== */}
-        <div className="adminForm-grid">
+                <div className="adminForm-grid">
 
-          <select
-            name="category"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="">Pilih kategori</option>
-            {categories.filter(c => !c.parent).map(cat => (
-              <option key={cat.slug} value={cat.slug}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+                  <select
+                    name="category"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="">Pilih kategori</option>
+                    {categories.filter(c => !c.parent).map(cat => (
+                      <option key={cat.slug} value={cat.slug}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
 
-          <select
-            name="subcategory"
-            defaultValue={editBook.subcategory}
-          >
-            <option value="">Tidak ada</option>
-            {categories
-              .filter(c => c.parent === selectedCategory)
-              .map(cat => (
-                <option key={cat.slug} value={cat.slug}>
-                  {cat.name}
-                </option>
-              ))}
-          </select>
+                  <select name="subcategory" defaultValue={editBook.subcategory}>
+                    <option value="">Tidak ada</option>
+                    {categories
+                      .filter(c => c.parent === selectedCategory)
+                      .map(cat => (
+                        <option key={cat.slug} value={cat.slug}>
+                          {cat.name}
+                        </option>
+                      ))}
+                  </select>
 
-        </div>
+                </div>
 
-        {/* ===== IMAGE ===== */}
-        <input type="file" name="image" />
+                <input type="file" name="image" />
 
-        {editBook.image && (
-          <img src={editBook.image} className="preview-img" />
+                {editBook.image && (
+                  <img src={editBook.image} className="preview-img" />
+                )}
+
+                <div className="modal-actions">
+
+                  <button
+                    className={`btn-primary ${loadingId === "edit" ? "btn-loading" : ""}`}
+                    disabled={loadingId === "edit"}
+                  >
+                    {loadingId === "edit" ? "Menyimpan..." : "Simpan"}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={() => setEditBook(null)}
+                  >
+                    Batal
+                  </button>
+
+                </div>
+
+              </form>
+
+            </div>
+          </div>
         )}
-
-        {/* ===== BUTTON ===== */}
-        <div className="modal-actions">
-
-          <button
-            className={`btn-primary ${loadingId === "edit" ? "btn-loading" : ""}`}
-            disabled={loadingId === "edit"}
-          >
-            {loadingId === "edit" ? "Menyimpan..." : "Simpan"}
-          </button>
-
-          <button
-            type="button"
-            className="btn-cancel"
-            onClick={() => setEditBook(null)}
-          >
-            Batal
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-  </div>
-)}
 
       </div>
     </AdminLayout>
