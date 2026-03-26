@@ -2,6 +2,7 @@ import { useState,useEffect } from "react"
 import axios from "axios"
 import { API_URL } from "../config"
 import AdminLayout from "../components/AdminLayout"
+import "../styles/admin-addbook.css"
 
 export default function AdminAddBook(){
 
@@ -35,71 +36,44 @@ setCategories(res.data)
 }
 
 useEffect(()=>{
-
 loadCategories()
-
 },[])
 
-/* ======================
-CREATE CATEGORY
-====================== */
-
 const createCategory = async()=>{
-
 try{
-
 await axios.post(`${API_URL}/api/categories`,{
 name:newCategory
 },adminConfig)
 
-alert("Kategori dibuat")
-
 setNewCategory("")
-
 loadCategories()
-
+alert("Kategori dibuat")
 }catch(err){
-
 console.log(err)
-
 }
-
 }
-
-/* ======================
-CREATE SUB CATEGORY
-====================== */
 
 const createSubCategory = async()=>{
-
 if(!category){
 alert("Pilih kategori utama dulu")
 return
 }
 
 try{
-
 await axios.post(`${API_URL}/api/categories`,{
 name:newSubCategory,
 parent:category
 },adminConfig)
 
-alert("Sub kategori dibuat")
-
 setNewSubCategory("")
-
 loadCategories()
-
+alert("Sub kategori dibuat")
 }catch(err){
-
 console.log(err)
-
 }
-
 }
 
 const submitBook = async(e)=>{
-
 e.preventDefault()
 
 if(loading) return
@@ -107,7 +81,6 @@ if(loading) return
 setLoading(true)
 
 try{
-
 const formData = new FormData()
 
 formData.append("title",title)
@@ -119,11 +92,7 @@ if(image){
 formData.append("image",image)
 }
 
-await axios.post(
-`${API_URL}/api/books`,
-formData,
-adminConfig
-)
+await axios.post(`${API_URL}/api/books`,formData,adminConfig)
 
 setTitle("")
 setPrice("")
@@ -133,65 +102,42 @@ setPreview(null)
 alert("Buku berhasil ditambahkan")
 
 }catch(err){
-
 console.log(err)
-
 }
 
 setLoading(false)
-
 }
 
 return(
-
 <AdminLayout>
 
-<div className="card">
+<div className="adminAddBook-page">
 
-<h2>Tambah Buku</h2>
+<div className="adminAddBook-card">
 
-<form onSubmit={submitBook} className="form-grid">
+<h2 className="adminAddBook-title">Tambah Buku</h2>
+
+<form onSubmit={submitBook} className="adminAddBook-form">
 
 <label>Judul Buku</label>
-<input
-value={title}
-onChange={e=>setTitle(e.target.value)}
-required
-/>
+<input value={title} onChange={e=>setTitle(e.target.value)} required />
 
 <label>Harga</label>
-<input
-type="number"
-value={price}
-onChange={e=>setPrice(e.target.value)}
-required
-/>
+<input type="number" value={price} onChange={e=>setPrice(e.target.value)} required />
 
 <label>Kategori</label>
 
-<select
-value={category}
-onChange={e=>setCategory(e.target.value)}
->
-
+<select value={category} onChange={e=>setCategory(e.target.value)}>
 <option value="">Pilih kategori</option>
 
-{categories
-.filter(c=>!c.parent)
-.map(cat=>(
-<option key={cat.slug} value={cat.slug}>
-{cat.name}
-</option>
+{categories.filter(c=>!c.parent).map(cat=>(
+<option key={cat.slug} value={cat.slug}>{cat.name}</option>
 ))}
-
 </select>
-
-{/* ===== BUAT KATEGORI BARU ===== */}
 
 <label>Buat Kategori Baru</label>
 
-<div className="category-box">
-
+<div className="adminAddBook-inline">
 <input
 placeholder="Kategori baru"
 value={newCategory}
@@ -201,34 +147,21 @@ onChange={(e)=>setNewCategory(e.target.value)}
 <button type="button" onClick={createCategory}>
 Tambah
 </button>
-
 </div>
 
 <label>Subkategori</label>
 
-<select
-value={subcategory}
-onChange={e=>setSubcategory(e.target.value)}
->
-
+<select value={subcategory} onChange={e=>setSubcategory(e.target.value)}>
 <option value="">Tidak ada</option>
 
-{categories
-.filter(c=>c.parent===category)
-.map(cat=>(
-<option key={cat.slug} value={cat.slug}>
-{cat.name}
-</option>
+{categories.filter(c=>c.parent===category).map(cat=>(
+<option key={cat.slug} value={cat.slug}>{cat.name}</option>
 ))}
-
 </select>
-
-{/* ===== BUAT SUB KATEGORI ===== */}
 
 <label>Buat Subkategori Baru</label>
 
-<div className="category-box">
-
+<div className="adminAddBook-inline">
 <input
 placeholder="Subkategori baru"
 value={newSubCategory}
@@ -238,7 +171,6 @@ onChange={(e)=>setNewSubCategory(e.target.value)}
 <button type="button" onClick={createSubCategory}>
 Tambah
 </button>
-
 </div>
 
 <label>Upload Cover</label>
@@ -246,24 +178,20 @@ Tambah
 <input
 type="file"
 onChange={(e)=>{
-
 const file = e.target.files[0]
-
 setImage(file)
-
 if(file){
 setPreview(URL.createObjectURL(file))
 }
-
 }}
 />
 
 {preview && (
-<img src={preview} className="preview"/>
+<img src={preview} className="adminAddBook-preview"/>
 )}
 
 <button
-className="primary"
+className="adminAddBook-btn"
 disabled={loading}
 >
 {loading ? "Uploading..." : "Tambah Buku"}
@@ -273,8 +201,8 @@ disabled={loading}
 
 </div>
 
+</div>
+
 </AdminLayout>
-
 )
-
 }
