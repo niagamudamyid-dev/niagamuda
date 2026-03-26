@@ -12,6 +12,7 @@ import AdminGuard from "./components/AdminGuard";
 import Footer from "./components/Footer";
 import AdminCategory from "./pages/AdminCategory"
 
+import BookDetail from "./pages/BookDetail"
 import "./App.css";
 
 function Layout(){
@@ -75,7 +76,7 @@ Login
 <Route path="/" element={<Home />} />
 <Route path="/login" element={<Login />} />
 <Route path="/kategori/:name" element={<Category />} />
-
+<Route path="/book/:id" element={<BookDetail />} />
 {/* ADMIN */}
 
 <Route
