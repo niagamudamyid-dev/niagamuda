@@ -1,0 +1,144 @@
+/* ===== PAGE ===== */
+.bookDetail-page {
+  padding: 40px 20px;
+  background: #f5f7fb;
+}
+
+/* CONTAINER */
+.bookDetail-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  max-width: 1100px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* IMAGE */
+.bookDetail-image {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* RIGHT */
+.bookDetail-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* BADGE */
+.bookDetail-badge {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 4px 10px;
+  width: fit-content;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+/* TITLE */
+.bookDetail-title {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+/* AUTHOR */
+.bookDetail-author {
+  color: #6b7280;
+}
+
+/* PRICE */
+.bookDetail-price {
+  font-size: 22px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+/* STOCK */
+.bookDetail-stock {
+  font-size: 14px;
+}
+
+/* BUY BUTTON */
+.bookDetail-buy {
+  margin-top: 15px;
+  display: inline-block;
+  padding: 12px;
+  text-align: center;
+  background: linear-gradient(135deg,#ff5722,#ee4d2d);
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.bookDetail-buy:hover {
+  transform: scale(1.05);
+}
+
+/* ===== DESKRIPSI ===== */
+.bookDetail-descBox {
+  max-width: 1100px;
+  margin: 30px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+}
+
+.bookDetail-descBox h2 {
+  margin-bottom: 10px;
+}
+
+/* ===== SPECS ===== */
+.bookDetail-specs {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.spec-item {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.spec-item span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.spec-item p {
+  font-weight: bold;
+}
+
+/* ===== LOADING ===== */
+.bookDetail-loading {
+  padding: 40px;
+  text-align: center;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .bookDetail-container {
+    grid-template-columns: 1fr;
+  }
+
+  .bookDetail-specs {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .bookDetail-specs {
+    grid-template-columns: 1fr;
+  }
+}
