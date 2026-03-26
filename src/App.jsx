@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link} from "react-router-dom";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -15,12 +15,16 @@ import AdminCategory from "./pages/AdminCategory"
 import BookDetail from "./pages/BookDetail"
 import "./App.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { API_URL } from "./config";
+
 
 function Layout(){
 
-const location = useLocation()
 const [search,setSearch] = useState("")
+const [books,setBooks] = useState([])
+const [categories,setCategories] = useState([])
 
 /* DETEKSI ADMIN PAGE */
 
@@ -28,13 +32,42 @@ const isAdmin =
 location.pathname.startsWith("/admin") ||
 location.pathname.startsWith("/cms-portal-2026")
 
-/* 🔥 HANDLE SEARCH */
+/* FETCH DATA */
+useEffect(()=>{
+axios.get(`${API_URL}/api/books`)
+.then(res=>setBooks(res.data))
+
+axios.get(`${API_URL}/api/categories`)
+.then(res=>setCategories(res.data))
+},[])
+
+/* 🔥 SEARCH REAL */
 const handleSearch = (e)=>{
 if(e.key === "Enter"){
-if(!search.trim()) return
-window.location.href = `/kategori/${search.toLowerCase()}`
+
+const keyword = search.toLowerCase()
+
+const found = books.find(
+b =>
+b.title.toLowerCase().includes(keyword) ||
+b.author?.toLowerCase().includes(keyword)
+)
+
+if(found){
+window.location.href = `/book/${found._id}`
+}else{
+alert("Buku tidak ditemukan")
 }
 }
+}
+
+/* 🔥 CATEGORY */
+const parentCategories = categories.filter(c=>!c.parent)
+
+/* 🔥 BUKU TERBARU */
+const latestBooks = [...books]
+.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt))
+.slice(0,8)
 
 
 return(
@@ -69,8 +102,38 @@ onKeyDown={handleSearch}
 <div className="nav-right">
 
 <Link to="/">Home</Link>
-<Link to="/books">Buku</Link>
-<Link to="/terbaru">Terbaru</Link>
+{/* 🔥 DROPDOWN BUKU */}
+<div className="nav-dropdown">
+<span>Buku ▾</span>
+
+<div className="dropdown-menu">
+
+{parentCategories.map(cat=>(
+<Link key={cat.slug} to={`/kategori/${cat.slug}`}>
+{cat.name}
+</Link>
+))}
+
+</div>
+
+</div>
+
+{/* 🔥 DROPDOWN TERBARU */}
+<div className="nav-dropdown">
+<span>Terbaru ▾</span>
+
+<div className="dropdown-menu">
+
+{latestBooks.map(book=>(
+<Link key={book._id} to={`/book/${book._id}`}>
+{book.title}
+</Link>
+))}
+
+</div>
+
+</div>
+
 <Link to="/tentang">Tentang</Link>
 
 </div>
