@@ -15,15 +15,27 @@ import AdminCategory from "./pages/AdminCategory"
 import BookDetail from "./pages/BookDetail"
 import "./App.css";
 
+import { useState } from "react";
+
 function Layout(){
 
 const location = useLocation()
+const [search,setSearch] = useState("")
 
 /* DETEKSI ADMIN PAGE */
 
 const isAdmin =
 location.pathname.startsWith("/admin") ||
 location.pathname.startsWith("/cms-portal-2026")
+
+/* 🔥 HANDLE SEARCH */
+const handleSearch = (e)=>{
+if(e.key === "Enter"){
+if(!search.trim()) return
+window.location.href = `/kategori/${search.toLowerCase()}`
+}
+}
+
 
 return(
 
@@ -41,15 +53,17 @@ return(
 Niagamuda
 </Link>
 
-<Link to="/kategori/fiksi" className="kategori">
-Kategori
-</Link>
-
 </div>
 
+{/* 🔥 SEARCH UPGRADE */}
 <div className="nav-search">
 <span className="search-icon">🔍</span>
-<input placeholder="Cari ebook..." />
+<input
+placeholder="Cari ebook..."
+value={search}
+onChange={(e)=>setSearch(e.target.value)}
+onKeyDown={handleSearch}
+/>
 </div>
 
 <div className="nav-right">
@@ -58,10 +72,6 @@ Kategori
 <Link to="/books">Buku</Link>
 <Link to="/terbaru">Terbaru</Link>
 <Link to="/tentang">Tentang</Link>
-
-<Link to="/login" className="login">
-Login
-</Link>
 
 </div>
 
