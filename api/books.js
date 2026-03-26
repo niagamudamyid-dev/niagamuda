@@ -148,6 +148,20 @@ if (req.method === "PUT") {
           subcategory: fields.subcategory?.[0] || null,
           image,
           public_id,
+
+          description: fields.description?.[0],
+  author: fields.author?.[0],
+  isbn: fields.isbn?.[0],
+  publisher: fields.publisher?.[0],
+  publishDate: fields.publishDate?.[0],
+  pages: fields.pages?.[0],
+  weight: fields.weight?.[0],
+  coverType: fields.coverType?.[0],
+  dimension: fields.dimension?.[0],
+  bonus: fields.bonus?.[0],
+  language: fields.language?.[0],
+  stock: Number(fields.stock?.[0]),
+  shopeeLink: fields.shopeeLink?.[0],
         },
         { new: true }
       );
@@ -197,6 +211,20 @@ if (req.method === "PUT") {
             subcategory: fields.subcategory ? fields.subcategory[0] : null,
             image,
             public_id,
+
+            description: fields.description?.[0],
+  author: fields.author?.[0],
+  isbn: fields.isbn?.[0],
+  publisher: fields.publisher?.[0],
+  publishDate: fields.publishDate?.[0],
+  pages: fields.pages?.[0],
+  weight: fields.weight?.[0],
+  coverType: fields.coverType?.[0],
+  dimension: fields.dimension?.[0],
+  bonus: fields.bonus?.[0],
+  language: fields.language?.[0],
+  stock: Number(fields.stock?.[0]),
+  shopeeLink: fields.shopeeLink?.[0],
           });
 
           return res.status(200).json(book);

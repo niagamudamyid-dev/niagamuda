@@ -7,6 +7,20 @@ price:Number,
 image:String,
 public_id:String,
 
+description: String,
+author: String,
+isbn: String,
+publisher: String,
+publishDate: String,
+pages: String,
+weight: String,
+coverType: String,
+dimension: String,
+bonus: String,
+language: String,
+stock: Number,
+shopeeLink: String,
+
 category:{
 type:String,
 required:true

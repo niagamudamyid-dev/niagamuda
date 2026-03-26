@@ -6,103 +6,57 @@ import "../styles/admin-addbook.css"
 
 export default function AdminAddBook(){
 
-const [title,setTitle] = useState("")
-const [price,setPrice] = useState("")
-const [category,setCategory] = useState("")
-const [subcategory,setSubcategory] = useState("")
+const [form,setForm] = useState({})
 const [categories,setCategories] = useState([])
-
 const [image,setImage] = useState(null)
 const [preview,setPreview] = useState(null)
-
 const [loading,setLoading] = useState(false)
+const [toast,setToast] = useState("")
 
-const [newCategory,setNewCategory] = useState("")
-const [newSubCategory,setNewSubCategory] = useState("")
-
-const adminConfig = {
-headers:{
-Authorization:`Bearer ${localStorage.getItem("adminToken")}`
-}
+const adminConfig={
+headers:{Authorization:`Bearer ${localStorage.getItem("adminToken")}`}
 }
 
-const loadCategories = ()=>{
-
-axios.get(`${API_URL}/api/categories`)
-.then(res=>{
-setCategories(res.data)
-})
-
+const showToast=(msg)=>{
+setToast(msg)
+setTimeout(()=>setToast(""),2500)
 }
 
 useEffect(()=>{
-loadCategories()
+axios.get(`${API_URL}/api/categories`)
+.then(res=>setCategories(res.data))
 },[])
 
-const createCategory = async()=>{
-try{
-await axios.post(`${API_URL}/api/categories`,{
-name:newCategory
-},adminConfig)
-
-setNewCategory("")
-loadCategories()
-alert("Kategori dibuat")
-}catch(err){
-console.log(err)
-}
+const handleChange=(e)=>{
+setForm({...form,[e.target.name]:e.target.value})
 }
 
-const createSubCategory = async()=>{
-if(!category){
-alert("Pilih kategori utama dulu")
-return
-}
-
-try{
-await axios.post(`${API_URL}/api/categories`,{
-name:newSubCategory,
-parent:category
-},adminConfig)
-
-setNewSubCategory("")
-loadCategories()
-alert("Sub kategori dibuat")
-}catch(err){
-console.log(err)
-}
-}
-
-const submitBook = async(e)=>{
+const submitBook=async(e)=>{
 e.preventDefault()
-
 if(loading) return
 
 setLoading(true)
 
 try{
-const formData = new FormData()
+const formData=new FormData()
 
-formData.append("title",title)
-formData.append("price",price)
-formData.append("category",category)
-formData.append("subcategory",subcategory)
+Object.keys(form).forEach(key=>{
+formData.append(key,form[key])
+})
 
-if(image){
-formData.append("image",image)
-}
+if(image) formData.append("image",image)
 
 await axios.post(`${API_URL}/api/books`,formData,adminConfig)
 
-setTitle("")
-setPrice("")
+setForm({})
 setImage(null)
 setPreview(null)
 
-alert("Buku berhasil ditambahkan")
+showToast("Buku berhasil ditambahkan")
 
+// eslint-disable-next-line no-unused-vars
 }catch(err){
-console.log(err)
+showToast("Gagal menambahkan buku")
 }
 
 setLoading(false)
@@ -113,94 +67,60 @@ return(
 
 <div className="adminAddBook-page">
 
+{toast && <div className="admin-toast">{toast}</div>}
+
 <div className="adminAddBook-card">
 
-<h2 className="adminAddBook-title">Tambah Buku</h2>
+<h2>Tambah Buku</h2>
 
 <form onSubmit={submitBook} className="adminAddBook-form">
 
-<label>Judul Buku</label>
-<input value={title} onChange={e=>setTitle(e.target.value)} required />
+<input name="title" placeholder="Judul" onChange={handleChange}/>
+<input name="author" placeholder="Penulis" onChange={handleChange}/>
+<input name="isbn" placeholder="ISBN" onChange={handleChange}/>
+<input name="publisher" placeholder="Penerbit" onChange={handleChange}/>
+<input name="publishDate" placeholder="Tanggal Terbit" onChange={handleChange}/>
+<input name="pages" placeholder="Jumlah Halaman" onChange={handleChange}/>
+<input name="weight" placeholder="Berat" onChange={handleChange}/>
+<input name="coverType" placeholder="Jenis Cover" onChange={handleChange}/>
+<input name="dimension" placeholder="Dimensi" onChange={handleChange}/>
+<input name="bonus" placeholder="Bonus" onChange={handleChange}/>
+<input name="language" placeholder="Bahasa" onChange={handleChange}/>
+<input name="stock" type="number" placeholder="Stok" onChange={handleChange}/>
+<input name="price" type="number" placeholder="Harga" onChange={handleChange}/>
+<input name="shopeeLink" placeholder="Link Shopee" onChange={handleChange}/>
 
-<label>Harga</label>
-<input type="number" value={price} onChange={e=>setPrice(e.target.value)} required />
+<textarea name="description" placeholder="Deskripsi" onChange={handleChange}/>
 
-<label>Kategori</label>
-
-<select value={category} onChange={e=>setCategory(e.target.value)}>
-<option value="">Pilih kategori</option>
-
+<select name="category" onChange={handleChange}>
+<option value="">Kategori</option>
 {categories.filter(c=>!c.parent).map(cat=>(
 <option key={cat.slug} value={cat.slug}>{cat.name}</option>
 ))}
 </select>
 
-<label>Buat Kategori Baru</label>
-
-<div className="adminAddBook-inline">
-<input
-placeholder="Kategori baru"
-value={newCategory}
-onChange={(e)=>setNewCategory(e.target.value)}
-/>
-
-<button type="button" onClick={createCategory}>
-Tambah
-</button>
-</div>
-
-<label>Subkategori</label>
-
-<select value={subcategory} onChange={e=>setSubcategory(e.target.value)}>
-<option value="">Tidak ada</option>
-
-{categories.filter(c=>c.parent===category).map(cat=>(
+<select name="subcategory" onChange={handleChange}>
+<option value="">Subkategori</option>
+{categories.filter(c=>c.parent===form.category).map(cat=>(
 <option key={cat.slug} value={cat.slug}>{cat.name}</option>
 ))}
 </select>
 
-<label>Buat Subkategori Baru</label>
-
-<div className="adminAddBook-inline">
-<input
-placeholder="Subkategori baru"
-value={newSubCategory}
-onChange={(e)=>setNewSubCategory(e.target.value)}
-/>
-
-<button type="button" onClick={createSubCategory}>
-Tambah
-</button>
-</div>
-
-<label>Upload Cover</label>
-
-<input
-type="file"
-onChange={(e)=>{
-const file = e.target.files[0]
+<input type="file" onChange={(e)=>{
+const file=e.target.files[0]
 setImage(file)
-if(file){
-setPreview(URL.createObjectURL(file))
-}
-}}
-/>
+if(file) setPreview(URL.createObjectURL(file))
+}}/>
 
-{preview && (
-<img src={preview} className="adminAddBook-preview"/>
-)}
+{preview && <img src={preview} className="adminAddBook-preview"/>}
 
-<button
-className="adminAddBook-btn"
-disabled={loading}
->
+<button disabled={loading}>
 {loading ? "Uploading..." : "Tambah Buku"}
 </button>
 
 </form>
 
 </div>
-
 </div>
 
 </AdminLayout>
