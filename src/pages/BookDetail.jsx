@@ -9,13 +9,11 @@ const {id}=useParams()
 const [book,setBook]=useState(null)
 
 useEffect(()=>{
-axios.get(`${API_URL}/api/books`)
-.then(res=>{
-setBook(res.data.find(b=>b._id===id))
-})
+axios.get(`${API_URL}/api/books?id=${id}`)
+.then(res=>setBook(res.data))
 },[id])
 
-if(!book) return <p>Loading...</p>
+if(!book) return <p style={{padding:30}}>Loading...</p>
 
 return(
 <div style={{padding:30}}>
@@ -35,15 +33,14 @@ return(
 <p><b>Bahasa:</b> {book.language}</p>
 <p><b>Stok:</b> {book.stock}</p>
 
-<br/>
-
 <a href={book.shopeeLink} target="_blank">
 <button style={{
 padding:12,
 background:"#ee4d2d",
 color:"white",
 border:"none",
-borderRadius:8
+borderRadius:8,
+marginTop:20
 }}>
 Beli di Shopee
 </button>
