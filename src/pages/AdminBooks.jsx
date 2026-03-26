@@ -169,86 +169,111 @@ export default function AdminBooks() {
 
         {/* MODAL EDIT */}
         {editBook && (
-          <div className="adminModal">
+  <div className="adminModal">
+    <div className="adminModal-box">
 
-            <div className="adminModal-box">
+      <h3>Edit Buku Lengkap</h3>
 
-              <h3>Edit Buku</h3>
+      <form onSubmit={handleUpdate} className="adminForm">
 
-              <form onSubmit={handleUpdate} className="adminForm">
+        {/* ===== GRID FORM ===== */}
+        <div className="adminForm-grid">
 
-                <input
-                  name="title"
-                  defaultValue={editBook.title}
-                  required
-                />
+          <input name="title" defaultValue={editBook.title} placeholder="Judul" />
+          <input name="author" defaultValue={editBook.author} placeholder="Penulis" />
 
-                <input
-                  name="price"
-                  type="number"
-                  defaultValue={editBook.price}
-                  required
-                />
+          <input name="isbn" defaultValue={editBook.isbn} placeholder="ISBN" />
+          <input name="publisher" defaultValue={editBook.publisher} placeholder="Penerbit" />
 
-                {/* 🔥 CATEGORY */}
-                <select
-                  name="category"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="">Pilih kategori</option>
+          <input name="publishDate" defaultValue={editBook.publishDate} placeholder="Tanggal Terbit" />
+          <input name="pages" defaultValue={editBook.pages} placeholder="Jumlah Halaman" />
 
-                  {categories
-                    .filter(c => !c.parent)
-                    .map(cat => (
-                      <option key={cat.slug} value={cat.slug}>
-                        {cat.name}
-                      </option>
-                    ))}
-                </select>
+          <input name="weight" defaultValue={editBook.weight} placeholder="Berat" />
+          <input name="coverType" defaultValue={editBook.coverType} placeholder="Jenis Cover" />
 
-                {/* 🔥 SUBCATEGORY DINAMIS */}
-                <select name="subcategory" defaultValue={editBook.subcategory}>
-                  <option value="">Tidak ada</option>
+          <input name="dimension" defaultValue={editBook.dimension} placeholder="Dimensi" />
+          <input name="bonus" defaultValue={editBook.bonus} placeholder="Bonus" />
 
-                  {categories
-                    .filter(c => c.parent === selectedCategory)
-                    .map(cat => (
-                      <option key={cat.slug} value={cat.slug}>
-                        {cat.name}
-                      </option>
-                    ))}
-                </select>
+          <input name="language" defaultValue={editBook.language} placeholder="Bahasa" />
+          <input name="stock" type="number" defaultValue={editBook.stock} placeholder="Stok" />
 
-                <input type="file" name="image" />
+          <input name="price" type="number" defaultValue={editBook.price} placeholder="Harga" />
+          <input name="shopeeLink" defaultValue={editBook.shopeeLink} placeholder="Link Shopee" />
 
-                <img src={editBook.image} className="preview-img" />
+        </div>
 
-                <div className="modal-actions">
-                  <button
-                    className={`btn-primary ${
-                      loadingId === "edit" ? "btn-loading" : ""
-                    }`}
-                    disabled={loadingId === "edit"}
-                  >
-                    {loadingId === "edit" ? "..." : "Simpan"}
-                  </button>
+        {/* ===== DESKRIPSI ===== */}
+        <textarea
+          name="description"
+          defaultValue={editBook.description}
+          placeholder="Deskripsi"
+          className="adminForm-textarea"
+        />
 
-                  <button
-                    type="button"
-                    className="btn-cancel"
-                    onClick={() => setEditBook(null)}
-                  >
-                    Batal
-                  </button>
-                </div>
+        {/* ===== CATEGORY ===== */}
+        <div className="adminForm-grid">
 
-              </form>
+          <select
+            name="category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">Pilih kategori</option>
+            {categories.filter(c => !c.parent).map(cat => (
+              <option key={cat.slug} value={cat.slug}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
 
-            </div>
+          <select
+            name="subcategory"
+            defaultValue={editBook.subcategory}
+          >
+            <option value="">Tidak ada</option>
+            {categories
+              .filter(c => c.parent === selectedCategory)
+              .map(cat => (
+                <option key={cat.slug} value={cat.slug}>
+                  {cat.name}
+                </option>
+              ))}
+          </select>
 
-          </div>
+        </div>
+
+        {/* ===== IMAGE ===== */}
+        <input type="file" name="image" />
+
+        {editBook.image && (
+          <img src={editBook.image} className="preview-img" />
         )}
+
+        {/* ===== BUTTON ===== */}
+        <div className="modal-actions">
+
+          <button
+            className={`btn-primary ${loadingId === "edit" ? "btn-loading" : ""}`}
+            disabled={loadingId === "edit"}
+          >
+            {loadingId === "edit" ? "Menyimpan..." : "Simpan"}
+          </button>
+
+          <button
+            type="button"
+            className="btn-cancel"
+            onClick={() => setEditBook(null)}
+          >
+            Batal
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+)}
 
       </div>
     </AdminLayout>
