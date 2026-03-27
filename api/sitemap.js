@@ -20,7 +20,6 @@ async function connectDB() {
 }
 
 export default async function handler(req, res) {
-
   try {
 
     await connectDB();
@@ -29,20 +28,15 @@ export default async function handler(req, res) {
 
     const baseUrl = "https://niagamuda-one.vercel.app";
 
-    let urls = "";
-
-    urls += `
+    let urls = `
 <url>
   <loc>${baseUrl}</loc>
-</url>`;
-
-    urls += `
+</url>
 <url>
   <loc>${baseUrl}/tentang</loc>
 </url>`;
 
     books.forEach(book => {
-
       if (!book.slug) return;
 
       urls += `
@@ -50,7 +44,6 @@ export default async function handler(req, res) {
   <loc>${baseUrl}/book/${book.slug}</loc>
   <lastmod>${book.updatedAt.toISOString()}</lastmod>
 </url>`;
-
     });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -58,19 +51,12 @@ export default async function handler(req, res) {
 ${urls}
 </urlset>`;
 
-    // 🔥 INI YANG PALING PENTING
-    res.writeHead(200, {
-      "Content-Type": "application/xml",
-    });
-
-    res.end(xml);
+    // 🔥 FIX UTAMA
+    res.setHeader("Content-Type", "text/xml");
+    res.status(200).send(xml);
 
   // eslint-disable-next-line no-unused-vars
   } catch (err) {
-
-    res.writeHead(500);
-    res.end("Error generating sitemap");
-
+    res.status(500).send("Error sitemap");
   }
-
 }
