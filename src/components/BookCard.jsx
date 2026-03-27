@@ -2,39 +2,49 @@ import { useNavigate } from "react-router-dom";
 
 export default function BookCard({ book }) {
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const handleClick = () => {
-  navigate(`/book/${book._id}`);
-};
+  // ✅ SEO slug dari title
+  const slug = book.title
+    ?.toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 
-return (
+  const handleClick = () => {
+    navigate(`/book/${slug}-${book._id}`);
+  };
 
-<div className="card" onClick={handleClick} style={{cursor:"pointer"}}>
+  return (
 
-<div className="card-cover">
+    <div 
+      className="card" 
+      onClick={handleClick} 
+      style={{ cursor: "pointer" }}
+    >
 
-<img
-src={book.image || "https://via.placeholder.com/300x450"}
-alt={book.title}
-/>
+      <div className="card-cover">
 
-</div>
+        <img
+          src={book.image || "https://via.placeholder.com/300x450"}
+          alt={book.title}
+          loading="lazy"
+        />
 
-<div className="card-sub">
-{book.subcategory || book.category}
-</div>
+      </div>
 
-<div className="card-title">
-{book.title}
-</div>
+      <div className="card-sub">
+        {book.subcategory || book.category}
+      </div>
 
-<div className="card-price">
-Rp {Number(book.price).toLocaleString()}
-</div>
+      <div className="card-title">
+        {book.title}
+      </div>
 
-</div>
+      <div className="card-price">
+        Rp {Number(book.price).toLocaleString()}
+      </div>
 
-)
+    </div>
 
+  );
 }

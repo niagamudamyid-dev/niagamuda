@@ -125,7 +125,7 @@ onKeyDown={handleSearch}
 <Route path="/" element={<Home />} />
 <Route path="/login" element={<Login />} />
 <Route path="/kategori/:name" element={<Category />} />
-<Route path="/book/:id" element={<BookDetail />} />
+<Route path="/book/:slug" element={<BookDetail />} />
 <Route path="/tentang" element={<Tentang/>} />
 
 <Route path="/cms-portal-2026" element={<AdminGuard><Admin/></AdminGuard>} />

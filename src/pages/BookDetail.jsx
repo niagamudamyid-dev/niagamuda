@@ -1,14 +1,18 @@
 import { useParams } from "react-router-dom"
 import { useEffect,useState } from "react"
 import axios from "axios"
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet-async"
 import { API_URL } from "../config"
 import "../styles/book-detail.css"
 
 export default function BookDetail(){
 
-const {id}=useParams()
-const [book,setBook]=useState(null)
+const {slug} = useParams()
+
+// 🔥 AMBIL ID DARI AKHIR URL
+const id = slug.split("-").pop()
+
+const [book,setBook] = useState(null)
 
 useEffect(()=>{
 axios.get(`${API_URL}/api/books?id=${id}`)
@@ -20,7 +24,8 @@ if(!book) return <div className="bookDetail-loading">Loading...</div>
 return(
 
 <div className="bookDetail-page">
-    <Helmet>
+
+<Helmet>
 <title>{book.title} | Niagamuda</title>
 
 <meta name="description" content={book.description?.slice(0,150)} />
@@ -51,18 +56,15 @@ return(
 
 <div className="bookDetail-container">
 
-{/* LEFT (IMAGE) */}
 <div className="bookDetail-left">
-
 <img
 src={book.image}
 alt={book.title}
 className="bookDetail-image"
+loading="lazy"
 />
-
 </div>
 
-{/* RIGHT (INFO) */}
 <div className="bookDetail-right">
 
 <div className="bookDetail-badge">
@@ -98,16 +100,11 @@ Beli di Shopee
 
 </div>
 
-{/* ===== DESKRIPSI ===== */}
 <div className="bookDetail-descBox">
-
 <h2>Deskripsi Buku</h2>
-
 <p>{book.description || "Tidak ada deskripsi"}</p>
-
 </div>
 
-{/* ===== DETAIL GRID ===== */}
 <div className="bookDetail-specs">
 
 <div className="spec-item">
