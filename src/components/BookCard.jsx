@@ -4,14 +4,17 @@ export default function BookCard({ book }) {
 
   const navigate = useNavigate();
 
-  // ✅ SEO slug dari title
-  const slug = book.title
+  // ✅ fallback slug (kalau data lama belum ada slug)
+  const fallbackSlug = book.title
     ?.toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
+  // ✅ prioritas slug dari database
+  const finalSlug = book.slug || `${fallbackSlug}-${book._id}`;
+
   const handleClick = () => {
-    navigate(`/book/${slug}-${book._id}`);
+    navigate(`/book/${finalSlug}`);
   };
 
   return (

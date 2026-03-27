@@ -21,6 +21,12 @@ language: String,
 stock: Number,
 shopeeLink: String,
 
+
+slug:{
+type:String,
+unique:true
+}, 
+
 category:{
 type:String,
 required:true

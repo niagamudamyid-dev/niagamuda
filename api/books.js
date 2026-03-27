@@ -31,7 +31,7 @@ async function connectDB() {
   return cached.conn;
 }
 
-// ✅ FIXED VERIFY ADMIN (AMAN + ROLE CHECK)
+// ✅ VERIFY ADMIN
 function verifyAdmin(req) {
   try {
     const auth = req.headers.authorization;
@@ -41,10 +41,8 @@ function verifyAdmin(req) {
     }
 
     const token = auth.split(" ")[1];
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // 🔥 WAJIB: cek role admin
     if (decoded.role !== "admin") {
       return { error: "Forbidden", status: 403 };
     }
@@ -59,7 +57,6 @@ function verifyAdmin(req) {
 
 export default async function handler(req, res) {
 
-  // ✅ BATASI CORS (JANGAN *)
   res.setHeader("Access-Control-Allow-Origin", "https://niagamuda-one.vercel.app");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -71,14 +68,21 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    const { id, category, subcategory } = req.query;
+    const { id, category, subcategory, slug } = req.query;
 
     // ================= GET =================
     if (req.method === "GET") {
 
+      // 🔥 PRIORITAS SLUG
+      if (slug) {
+        const book = await Book.findOne({ slug });
+        return res.status(200).json(book);
+      }
+
+      // 🔥 BACKUP ID
       if (id) {
         const book = await Book.findById(id);
-        return res.json(book);
+        return res.status(200).json(book);
       }
 
       let filter = {};
@@ -130,7 +134,6 @@ export default async function handler(req, res) {
             return res.status(404).json({ message: "Book not found" });
           }
 
-          // ✅ VALIDASI SEDERHANA
           const price = Number(fields.price?.[0]);
           if (fields.price && (isNaN(price) || price < 0)) {
             return res.status(400).json({ message: "Invalid price" });
@@ -156,10 +159,19 @@ export default async function handler(req, res) {
             public_id = upload.public_id;
           }
 
+          // 🔥 UPDATE SLUG JIKA TITLE DIUBAH
+          const newTitle = fields.title?.[0] || book.title;
+
+          const slug = newTitle
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "");
+
           const updated = await Book.findByIdAndUpdate(
             id,
             {
-              title: fields.title?.[0] || book.title,
+              title: newTitle,
+              slug,
               price: fields.price ? price : book.price,
               category: fields.category?.[0] || book.category,
               subcategory: fields.subcategory?.[0] || book.subcategory,
@@ -229,8 +241,17 @@ export default async function handler(req, res) {
             public_id = upload.public_id;
           }
 
+          // 🔥 CREATE SLUG
+          const title = fields.title?.[0] || "";
+
+          const slug = title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "");
+
           const book = await Book.create({
-            title: fields.title?.[0] || "",
+            title,
+            slug,
             price,
             category: fields.category?.[0] || "",
             subcategory: fields.subcategory?.[0] || "",
