@@ -4,17 +4,14 @@ export default function BookCard({ book }) {
 
   const navigate = useNavigate();
 
-  // ✅ fallback slug (kalau data lama belum ada slug)
-  const fallbackSlug = book.title
-    ?.toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-
-  // ✅ prioritas slug dari database
-  const finalSlug = book.slug || `${fallbackSlug}-${book._id}`;
-
+  // 🔥 WAJIB: hanya slug
   const handleClick = () => {
-    navigate(`/book/${finalSlug}`);
+    if (!book.slug) {
+      alert("Slug belum tersedia, silakan update data buku");
+      return;
+    }
+
+    navigate(`/book/${book.slug}`);
   };
 
   return (
@@ -26,13 +23,11 @@ export default function BookCard({ book }) {
     >
 
       <div className="card-cover">
-
         <img
           src={book.image || "https://via.placeholder.com/300x450"}
           alt={book.title}
           loading="lazy"
         />
-
       </div>
 
       <div className="card-sub">

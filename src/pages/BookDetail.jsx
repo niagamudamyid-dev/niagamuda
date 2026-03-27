@@ -9,10 +9,7 @@ export default function BookDetail(){
 
   const { slug } = useParams()
 
-  // 🔥 cek apakah ada id di akhir slug
-  const possibleId = slug?.split("-").pop()
-  const isObjectId = possibleId?.length === 24 // standar MongoDB
-
+ 
   const [book,setBook] = useState(null)
 
   useEffect(()=>{
@@ -25,20 +22,6 @@ export default function BookDetail(){
         if (res.data) {
           setBook(res.data)
         } 
-        
-        // 🔥 FALLBACK KE ID (data lama)
-        else if (isObjectId) {
-          axios.get(`${API_URL}/api/books?id=${possibleId}`)
-            .then(res2 => setBook(res2.data))
-        }
-
-      })
-      .catch(() => {
-        // fallback kalau slug gagal total
-        if (isObjectId) {
-          axios.get(`${API_URL}/api/books?id=${possibleId}`)
-            .then(res2 => setBook(res2.data))
-        }
       })
 
   },[slug])
