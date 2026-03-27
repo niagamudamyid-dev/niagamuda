@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://niagamuda-one.vercel.app/sitemap.xml
+Sitemap: https://niagamuda-one.vercel.app/api/sitemap.xml
