@@ -34,7 +34,10 @@ export default function BookDetail(){
 
       <Helmet>
         <title>{book.title} | Niagamuda</title>
-
+        <link 
+rel="canonical" 
+href={`https://niagamuda-one.vercel.app/book/${book.slug}`} 
+/>
         <meta name="description" content={book.description?.slice(0,150)} />
 
         <meta property="og:title" content={book.title} />
