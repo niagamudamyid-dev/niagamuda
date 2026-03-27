@@ -31,44 +31,45 @@ export default async function handler(req, res) {
 
     let urls = "";
 
-    // STATIC
     urls += `
-    <url>
-      <loc>${baseUrl}</loc>
-      <priority>1.0</priority>
-    </url>`;
+<url>
+  <loc>${baseUrl}</loc>
+</url>`;
 
     urls += `
-    <url>
-      <loc>${baseUrl}/tentang</loc>
-      <priority>0.8</priority>
-    </url>`;
+<url>
+  <loc>${baseUrl}/tentang</loc>
+</url>`;
 
-    // BOOK
     books.forEach(book => {
 
       if (!book.slug) return;
 
       urls += `
-      <url>
-        <loc>${baseUrl}/book/${book.slug}</loc>
-        <lastmod>${book.updatedAt.toISOString()}</lastmod>
-        <priority>0.8</priority>
-      </url>`;
+<url>
+  <loc>${baseUrl}/book/${book.slug}</loc>
+  <lastmod>${book.updatedAt.toISOString()}</lastmod>
+</url>`;
 
     });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${urls}
-    </urlset>`;
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
 
-    res.setHeader("Content-Type", "text/xml");
-    res.status(200).send(xml);
+    // 🔥 INI YANG PALING PENTING
+    res.writeHead(200, {
+      "Content-Type": "application/xml",
+    });
 
+    res.end(xml);
+
+  // eslint-disable-next-line no-unused-vars
   } catch (err) {
 
-    res.status(500).json({ error: err.message });
+    res.writeHead(500);
+    res.end("Error generating sitemap");
 
   }
 
