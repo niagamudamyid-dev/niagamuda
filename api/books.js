@@ -31,18 +31,36 @@ async function connectDB() {
   return cached.conn;
 }
 
+// ✅ FIXED VERIFY ADMIN (AMAN + ROLE CHECK)
 function verifyAdmin(req) {
-  const auth = req.headers.authorization;
+  try {
+    const auth = req.headers.authorization;
 
-  if (!auth) throw new Error("Unauthorized");
+    if (!auth) {
+      return { error: "Unauthorized", status: 401 };
+    }
 
-  const token = auth.split(" ")[1];
-  jwt.verify(token, process.env.JWT_SECRET);
+    const token = auth.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // 🔥 WAJIB: cek role admin
+    if (decoded.role !== "admin") {
+      return { error: "Forbidden", status: 403 };
+    }
+
+    return { user: decoded };
+
+  // eslint-disable-next-line no-unused-vars
+  } catch (err) {
+    return { error: "Invalid token", status: 401 };
+  }
 }
 
 export default async function handler(req, res) {
 
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  // ✅ BATASI CORS (JANGAN *)
+  res.setHeader("Access-Control-Allow-Origin", "https://niagamuda-one.vercel.app");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
@@ -58,7 +76,6 @@ export default async function handler(req, res) {
     // ================= GET =================
     if (req.method === "GET") {
 
-      // 🔥 GET BY ID (FIX DETAIL PAGE)
       if (id) {
         const book = await Book.findById(id);
         return res.json(book);
@@ -77,7 +94,8 @@ export default async function handler(req, res) {
     // ================= DELETE =================
     if (req.method === "DELETE") {
 
-      verifyAdmin(req);
+      const auth = verifyAdmin(req);
+      if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
       const book = await Book.findById(id);
 
@@ -94,10 +112,11 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: "Deleted" });
     }
 
-    // ================= PUT (UPDATE) =================
+    // ================= PUT =================
     if (req.method === "PUT") {
 
-      verifyAdmin(req);
+      const auth = verifyAdmin(req);
+      if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
       const form = new IncomingForm();
 
@@ -109,6 +128,12 @@ export default async function handler(req, res) {
 
           if (!book) {
             return res.status(404).json({ message: "Book not found" });
+          }
+
+          // ✅ VALIDASI SEDERHANA
+          const price = Number(fields.price?.[0]);
+          if (fields.price && (isNaN(price) || price < 0)) {
+            return res.status(400).json({ message: "Invalid price" });
           }
 
           let image = book.image;
@@ -134,24 +159,24 @@ export default async function handler(req, res) {
           const updated = await Book.findByIdAndUpdate(
             id,
             {
-              title: fields.title?.[0] || "",
-              price: Number(fields.price?.[0] || 0),
-              category: fields.category?.[0] || "",
-              subcategory: fields.subcategory?.[0] || "",
+              title: fields.title?.[0] || book.title,
+              price: fields.price ? price : book.price,
+              category: fields.category?.[0] || book.category,
+              subcategory: fields.subcategory?.[0] || book.subcategory,
 
-              description: fields.description?.[0] || "",
-              author: fields.author?.[0] || "",
-              isbn: fields.isbn?.[0] || "",
-              publisher: fields.publisher?.[0] || "",
-              publishDate: fields.publishDate?.[0] || "",
-              pages: fields.pages?.[0] || "",
-              weight: fields.weight?.[0] || "",
-              coverType: fields.coverType?.[0] || "",
-              dimension: fields.dimension?.[0] || "",
-              bonus: fields.bonus?.[0] || "",
-              language: fields.language?.[0] || "",
-              stock: Number(fields.stock?.[0] || 0),
-              shopeeLink: fields.shopeeLink?.[0] || "",
+              description: fields.description?.[0] || book.description,
+              author: fields.author?.[0] || book.author,
+              isbn: fields.isbn?.[0] || book.isbn,
+              publisher: fields.publisher?.[0] || book.publisher,
+              publishDate: fields.publishDate?.[0] || book.publishDate,
+              pages: fields.pages?.[0] || book.pages,
+              weight: fields.weight?.[0] || book.weight,
+              coverType: fields.coverType?.[0] || book.coverType,
+              dimension: fields.dimension?.[0] || book.dimension,
+              bonus: fields.bonus?.[0] || book.bonus,
+              language: fields.language?.[0] || book.language,
+              stock: Number(fields.stock?.[0] || book.stock),
+              shopeeLink: fields.shopeeLink?.[0] || book.shopeeLink,
 
               image,
               public_id
@@ -174,13 +199,19 @@ export default async function handler(req, res) {
     // ================= POST =================
     if (req.method === "POST") {
 
-      verifyAdmin(req);
+      const auth = verifyAdmin(req);
+      if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
       const form = new IncomingForm();
 
       form.parse(req, async (err, fields, files) => {
 
         try {
+
+          const price = Number(fields.price?.[0]);
+          if (isNaN(price) || price < 0) {
+            return res.status(400).json({ message: "Invalid price" });
+          }
 
           let image = null;
           let public_id = null;
@@ -200,7 +231,7 @@ export default async function handler(req, res) {
 
           const book = await Book.create({
             title: fields.title?.[0] || "",
-            price: Number(fields.price?.[0] || 0),
+            price,
             category: fields.category?.[0] || "",
             subcategory: fields.subcategory?.[0] || "",
 
