@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useEffect,useState } from "react"
 import axios from "axios"
+import { Helmet } from "react-helmet-async";
 import { API_URL } from "../config"
 import "../styles/book-detail.css"
 
@@ -19,6 +20,34 @@ if(!book) return <div className="bookDetail-loading">Loading...</div>
 return(
 
 <div className="bookDetail-page">
+    <Helmet>
+<title>{book.title} | Niagamuda</title>
+
+<meta name="description" content={book.description?.slice(0,150)} />
+
+<meta property="og:title" content={book.title} />
+<meta property="og:description" content={book.description} />
+<meta property="og:image" content={book.image} />
+
+<meta name="twitter:card" content="summary_large_image" />
+</Helmet>
+
+{/* 🔥 STRUCTURED DATA */}
+<script type="application/ld+json">
+{JSON.stringify({
+"@context":"https://schema.org",
+"@type":"Book",
+"name": book.title,
+"author": book.author,
+"description": book.description,
+"image": book.image,
+"offers": {
+"@type":"Offer",
+"price": book.price,
+"priceCurrency":"IDR"
+}
+})}
+</script>
 
 <div className="bookDetail-container">
 

@@ -1,5 +1,6 @@
 import {useEffect,useState} from "react"
 import axios from "axios"
+import { Helmet } from "react-helmet-async";
 import BookCard from "../components/BookCard"
 import {API_URL} from "../config"
 import "./home.css"
@@ -25,6 +26,15 @@ categories.filter(c=>!c.parent)
 return(
 
 <div className="home">
+<Helmet>
+<title>Niagamuda - Ebook Murah & Terpercaya</title>
+<meta name="description" content="Temukan ebook murah berkualitas di Niagamuda. Banyak kategori dan harga terjangkau." />
+<meta name="keywords" content="ebook murah, buku online, niagamuda" />
+
+<meta property="og:title" content="Niagamuda Ebook Store" />
+<meta property="og:description" content="Platform ebook murah dan terpercaya" />
+<meta property="og:image" content="https://images.unsplash.com/photo-1512820790803-83ca734da794" />
+</Helmet>
 
 <div className="home-container">
 
@@ -57,7 +67,7 @@ Lihat Ebook
 <div className="hero-right">
 
 <img
-src="https://images.unsplash.com/photo-1512820790803-83ca734da794"
+src="https://images.unsplash.com/photo-1512820790803-83ca734da794" loading="lazy"
 />
 
 </div>
