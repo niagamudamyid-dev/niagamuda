@@ -21,45 +21,55 @@ async function connectDB() {
 
 export default async function handler(req, res) {
 
-  await connectDB();
+  try {
 
-  const books = await Book.find({}, "slug updatedAt");
+    await connectDB();
 
-  const baseUrl = "https://niagamuda-one.vercel.app";
+    const books = await Book.find({}, "slug updatedAt");
 
-  const staticPages = [
-    "",
-    "/tentang"
-  ];
+    const baseUrl = "https://niagamuda-one.vercel.app";
 
-  let urls = "";
+    let urls = "";
 
-  // STATIC
-  staticPages.forEach((page) => {
+    // STATIC
     urls += `
     <url>
-      <loc>${baseUrl}${page}</loc>
+      <loc>${baseUrl}</loc>
       <priority>1.0</priority>
     </url>`;
-  });
-
-  // DYNAMIC BOOK
-  books.forEach((book) => {
-    if (!book.slug) return;
 
     urls += `
     <url>
-      <loc>${baseUrl}/book/${book.slug}</loc>
-      <lastmod>${book.updatedAt.toISOString()}</lastmod>
+      <loc>${baseUrl}/tentang</loc>
       <priority>0.8</priority>
     </url>`;
-  });
 
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    // BOOK
+    books.forEach(book => {
+
+      if (!book.slug) return;
+
+      urls += `
+      <url>
+        <loc>${baseUrl}/book/${book.slug}</loc>
+        <lastmod>${book.updatedAt.toISOString()}</lastmod>
+        <priority>0.8</priority>
+      </url>`;
+
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     ${urls}
-  </urlset>`;
+    </urlset>`;
 
-  res.setHeader("Content-Type", "text/xml");
-  res.status(200).send(sitemap);
+    res.setHeader("Content-Type", "text/xml");
+    res.status(200).send(xml);
+
+  } catch (err) {
+
+    res.status(500).json({ error: err.message });
+
+  }
+
 }
